@@ -1,3 +1,3 @@
 package main.scala.caseclass
 
-case class Movies(id : Int,name : String, genres: String)
+case class Movies(movieId : Int,title : String, genres: String)
