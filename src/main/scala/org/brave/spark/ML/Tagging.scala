@@ -6,7 +6,7 @@ import org.brave.util.demo.RunHelloWorldOnLocalServer._
 
 object Tagging extends BaseConf {
   def main(args: Array[String]) {
-    val conf = new SparkConf().setAppName("Tagging").setMaster(sparkMasterLocal)
+    conf.setAppName("Tagging")
     val sc = new SparkContext(conf)
     val hc = new org.apache.spark.sql.hive.HiveContext(sc)
 

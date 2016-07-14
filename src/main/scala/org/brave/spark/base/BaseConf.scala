@@ -2,7 +2,9 @@ package org.brave.spark.base
 
 import java.util.Properties
 
+import org.apache.spark.SparkConf
 import org.brave.util.PropertiesUtil
+import org.brave.util.demo.RunHelloWorldOnLocalServer._
 
 
 /**
@@ -40,4 +42,8 @@ class BaseConf {
    * 本地demo文件的地址
    */
   var demoFilePathLocal: String = properties.getProperty("demo.file.path.local")
+
+  val conf = new SparkConf()
+  conf.setMaster(sparkMasterLocal)
+  conf.set("spark.executor.memory", sparkDriverMemory)
 }

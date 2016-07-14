@@ -8,7 +8,7 @@ import org.brave.util.demo.RunHelloWorldOnLocalServer._
 
 object Recommandation extends BaseConf {
   def main(args: Array[String]) {
-    val conf = new SparkConf().setAppName("Recommandation").setMaster(sparkMasterLocal)
+    conf.setAppName("Recommandation")
     val sc = new SparkContext(conf)
     val hc = new org.apache.spark.sql.hive.HiveContext(sc)
     hc.sql("cache table movies")

@@ -3,15 +3,15 @@ package org.brave.spark.util.datacleaner
 import org.apache.spark._
 import org.brave.spark.base.BaseConf
 import org.brave.spark.caseclass.{Links, Movies, Ratings, Tags}
+import org.brave.util.demo.RunHelloWorldOnLocalServer._
 
 object ETL extends BaseConf {
   def main(args: Array[String]) {
     var filepath = "data";
-    val conf = new SparkConf().setAppName("ETL for files from " + filepath).setMaster(sparkMasterLocal)
+    conf.setAppName("ETL for files from " + filepath)
     val sc = new SparkContext(conf)
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
     val hc = new org.apache.spark.sql.hive.HiveContext(sc)
-
     import sqlContext.implicits._
     val movies = sc.textFile("data/movies.txt").map(_.split(",")).map(x => Movies(x(0).trim().toInt,
       x(1).trim(),
