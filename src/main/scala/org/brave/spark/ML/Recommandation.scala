@@ -3,12 +3,14 @@ package org.brave.spark.ml
 import org.apache.spark._
 import org.apache.spark.ml.classification.LogisticRegression
 import org.apache.spark.mllib.linalg.Vectors
+import org.brave.spark.base.BaseConf
+import org.brave.util.demo.RunHelloWorldOnLocalServer._
 
-object Recommandation {
+object Recommandation extends BaseConf{
   def main(args: Array[String]) {
     val sparkMasterUrlDev = "spark://master60:7077"
     val sparkMasterUrlLocal = "local[2]"
-    val conf = new SparkConf().setAppName("Recommandation").setMaster(sparkMasterUrlLocal)
+    val conf = new SparkConf().setAppName("Recommandation").setMaster(sparkMasterLocal)
     val sc = new SparkContext(conf)
     val hc = new org.apache.spark.sql.hive.HiveContext(sc)
     hc.sql("cache table movies")

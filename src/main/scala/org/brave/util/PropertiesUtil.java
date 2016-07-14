@@ -4,8 +4,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class PropertiesUtil {
-    public static Properties loadProperties() {
-        String configpath="/util.properties";
+    public static Properties loadProperties(String configpath) {
         Properties properties = new Properties();
         try {
             InputStream localInputStream = PropertiesUtil.class.getResourceAsStream(configpath);

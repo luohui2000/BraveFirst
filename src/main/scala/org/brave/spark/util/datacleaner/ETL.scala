@@ -1,14 +1,13 @@
 package org.brave.spark.util.datacleaner
 
 import org.apache.spark._
+import org.brave.spark.base.BaseConf
 import org.brave.spark.caseclass.{Links, Movies, Ratings, Tags}
 
-object ETL {
+object ETL extends BaseConf{
   def main(args: Array[String]) {
-    val filepath = "data"
-    val sparkMasterUrlDev = "spark://master60:7077"
-    val sparkMasterUrlLocal = "local[2]"
-    val conf = new SparkConf().setAppName("ETL for files from " + filepath).setMaster(sparkMasterUrlLocal)
+    var filepath="data";
+    val conf = new SparkConf().setAppName("ETL for files from " + filepath).setMaster(sparkMasterLocal)
     val sc = new SparkContext(conf)
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
     val hc = new org.apache.spark.sql.hive.HiveContext(sc)
