@@ -6,7 +6,7 @@ import org.apache.spark.mllib.linalg.Vectors
 import org.brave.spark.base.BaseConf
 import org.brave.util.demo.RunHelloWorldOnLocalServer._
 
-object Recommandation extends BaseConf{
+object Recommandation extends BaseConf {
   def main(args: Array[String]) {
     val sparkMasterUrlDev = "spark://master60:7077"
     val sparkMasterUrlLocal = "local[2]"

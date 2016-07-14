@@ -3,6 +3,12 @@ package org.brave.util;
 import java.io.InputStream;
 import java.util.Properties;
 
+/**
+ * Created by yuchen
+ * on 2016-07-14.
+ * <p>
+ * 配置文件的通用读取
+ */
 public class PropertiesUtil {
     public static Properties loadProperties(String configpath) {
         Properties properties = new Properties();

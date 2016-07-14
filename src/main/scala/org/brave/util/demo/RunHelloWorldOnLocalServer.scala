@@ -3,8 +3,13 @@ package org.brave.util.demo
 import org.apache.spark._
 import org.brave.spark.base.BaseConf
 
-
-object RunHelloWorldOnLocalServer extends BaseConf{
+/**
+ * Created by yuchen
+ * on 2016-07-14.
+ *
+ * 以本地local的方式直接运行不需要依赖spark集群
+ */
+object RunHelloWorldOnLocalServer extends BaseConf {
   def main(args: Array[String]) {
     val conf = new SparkConf()
     conf.setMaster(sparkMasterLocal)

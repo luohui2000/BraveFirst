@@ -4,9 +4,9 @@ import org.apache.spark._
 import org.brave.spark.base.BaseConf
 import org.brave.spark.caseclass.{Links, Movies, Ratings, Tags}
 
-object ETL extends BaseConf{
+object ETL extends BaseConf {
   def main(args: Array[String]) {
-    var filepath="data";
+    var filepath = "data";
     val conf = new SparkConf().setAppName("ETL for files from " + filepath).setMaster(sparkMasterLocal)
     val sc = new SparkContext(conf)
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
@@ -24,12 +24,18 @@ object ETL extends BaseConf{
       x(3).trim().toDouble)).toDF()
     ratings.write.saveAsTable("ratings")
 
-    val links = sc.textFile("data/links.txt").filter { !_.endsWith(",") }.map(_.split(",")).map(x => Links(x(0).trim().toInt,
+    val links = sc.textFile("data/links.txt").filter {
+      !_.endsWith(",")
+    }.map(_.split(",")).map(x => Links(x(0).trim().toInt,
       x(1).trim().toInt,
       x(2).trim().toInt)).toDF()
     links.write.saveAsTable("links")
 
-    val tags = sc.textFile("data/tags.txt").filter { !_.endsWith(",") }.filter { !_.toString().contains('\"')}.map(_.split(",")).map(x => Tags(x(0).trim().toInt,
+    val tags = sc.textFile("data/tags.txt").filter {
+      !_.endsWith(",")
+    }.filter {
+      !_.toString().contains('\"')
+    }.map(_.split(",")).map(x => Tags(x(0).trim().toInt,
       x(1).trim().toInt,
       x(2).trim(),
       x(3).trim().toDouble)).toDF()
