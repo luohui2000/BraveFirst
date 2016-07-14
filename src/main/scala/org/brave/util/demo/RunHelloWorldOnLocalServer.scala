@@ -24,7 +24,7 @@ object RunHelloWorldOnLocalServer {
     df.show()
     df.printSchema();
     df.registerTempTable("demo")
-    var peopleName = sqlContext.sql("select  name,count(name) from demo group by name having(count(name)>1) ")
+    var peopleName = sqlContext.sql("select  *  from demo  ")
     peopleName.collect().foreach(println)
   }
 }

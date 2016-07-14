@@ -20,8 +20,9 @@ object RunHelloWorldOnRemoteServer {
     val df = sqlContext.read.json(demoFilePathRemote)
     df.show()
     df.printSchema();
-    df.registerTempTable("demo")
-    var peopleName=sqlContext.sql("select  name,count(name) from demo group by name having(count(name)>0) ")
+    df.registerTempTable("people")
+    //var peopleName=sqlContext.sql("select  name,count(name) from demo group by name having(count(name)>0) ")
+    var peopleName=sqlContext.sql("select  * from people")
     peopleName.collect().foreach(println)
   }
 }
