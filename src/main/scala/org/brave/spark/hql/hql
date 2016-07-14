@@ -1,0 +1,1 @@
+select userid,count(*) as c from ratings group by userid order by c desc;
