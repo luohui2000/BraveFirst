@@ -1,8 +1,8 @@
 package org.brave.spark.ml
 
 import org.apache.spark._
-import org.brave.spark.base.BaseConf
-import org.brave.util.demo.RunHelloWorldOnLocalServer._
+import main.scala.org.brave.spark.base.BaseConf
+import main.scala.org.brave.util.demo.RunHelloWorldOnLocalServer._
 
 object Tagging extends BaseConf {
   def main(args: Array[String]) {

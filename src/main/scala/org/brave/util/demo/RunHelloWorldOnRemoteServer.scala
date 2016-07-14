@@ -1,7 +1,7 @@
-package org.brave.util.demo
+package main.scala.org.brave.util.demo
 
 import org.apache.spark._
-import org.brave.spark.base.BaseConf
+import main.scala.org.brave.spark.base.BaseConf
 
 /**
  * 去spark集群上面以jar文件的方式运行

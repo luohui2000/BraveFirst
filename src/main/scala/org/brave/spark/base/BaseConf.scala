@@ -1,10 +1,10 @@
-package org.brave.spark.base
+package main.scala.org.brave.spark.base
 
 import java.util.Properties
 
 import org.apache.spark.SparkConf
-import org.brave.util.PropertiesUtil
-import org.brave.util.demo.RunHelloWorldOnLocalServer._
+import main.java.org.brave.util.PropertiesUtil
+import main.scala.org.brave.util.demo.RunHelloWorldOnLocalServer
 
 
 /**
