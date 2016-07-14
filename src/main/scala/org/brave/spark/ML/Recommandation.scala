@@ -1,4 +1,4 @@
-package org.brave.spark.ML
+package org.brave.spark.ml
 
 import org.apache.spark._
 import org.apache.spark.ml.classification.LogisticRegression
