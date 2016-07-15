@@ -7,7 +7,6 @@
 
 	<build>
 		<sourceDirectory>src/main/scala</sourceDirectory>
-		<testSourceDirectory>src/test/java,src/test/scala</testSourceDirectory>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -68,7 +67,6 @@
 			<version>1.6.1</version>
 		</dependency>
 		<dependency>
-
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-mllib_2.10</artifactId>
 			<version>1.6.1</version>

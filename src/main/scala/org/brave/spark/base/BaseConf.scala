@@ -4,7 +4,7 @@ import java.util.Properties
 
 
 import org.apache.spark.SparkConf
-import org.brave.util.PropertiesUtil
+import org.brave.util.util.PropertiesUtil
 
 
 /**
