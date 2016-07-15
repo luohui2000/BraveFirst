@@ -1,7 +1,7 @@
-package main.scala.org.brave.util.demo
+package org.brave.util.demo
 
 import org.apache.spark._
-import main.scala.org.brave.spark.base.BaseConf
+import org.brave.spark.base.BaseConf
 
 /**
  * Created by yuchen

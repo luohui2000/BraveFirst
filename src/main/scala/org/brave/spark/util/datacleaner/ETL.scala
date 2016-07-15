@@ -1,9 +1,8 @@
 package org.brave.spark.util.datacleaner
 
 import org.apache.spark._
-import main.scala.org.brave.spark.base.BaseConf
+import org.brave.spark.base.BaseConf
 import org.brave.spark.caseclass.{Links, Movies, Ratings, Tags}
-import main.scala.org.brave.util.demo.RunHelloWorldOnLocalServer._
 
 object ETL extends BaseConf {
   def main(args: Array[String]) {

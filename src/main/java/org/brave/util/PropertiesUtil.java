@@ -1,4 +1,4 @@
-package main.java.org.brave.util;
+package org.brave.util;
 
 import java.io.InputStream;
 import java.util.Properties;

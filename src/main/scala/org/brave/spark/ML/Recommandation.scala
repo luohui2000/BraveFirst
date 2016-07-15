@@ -3,8 +3,7 @@ package org.brave.spark.ml
 import org.apache.spark._
 import org.apache.spark.ml.classification.LogisticRegression
 import org.apache.spark.mllib.linalg.Vectors
-import main.scala.org.brave.spark.base.BaseConf
-import main.scala.org.brave.util.demo.RunHelloWorldOnLocalServer._
+import org.brave.spark.base.BaseConf
 
 object Recommandation extends BaseConf {
   def main(args: Array[String]) {
