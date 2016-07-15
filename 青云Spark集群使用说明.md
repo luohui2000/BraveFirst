@@ -23,7 +23,7 @@ p=/usr/lib/phoenix
 z=/usr/lib/zeppelin
 f=/usr/lib/flume
 k=/usr/lib/kafka
-大家可以快速访问对应的路径
+大家可以快速访问对应的路径，例如cd $s
 
 咱们现在movielens的数据放在了master的$SPARK_HOME/data文件夹中。yelp的数据有需要再传吧。网络是按流量收费的。
-
+目前hivecontext还有点问题，在spark-shell里创建hivecontext对象会报错。不过好消息是bin/spark-sql是可以正常使用的，注意使用它时请注意当前路径请在$SPARK_HOME。
