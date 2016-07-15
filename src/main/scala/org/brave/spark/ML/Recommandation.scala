@@ -5,9 +5,12 @@ import org.apache.spark.ml.classification.LogisticRegression
 import org.apache.spark.mllib.linalg.Vectors
 import org.brave.spark.base.BaseConf
 
+/**
+ * 运行完ETL后可以运行这个类。这个是一个实验性质的类，
+ * 取某个表的数据提取特征向量，然后用逻辑回归来训练一个模型。
+ */
 object Recommandation extends BaseConf {
   def main(args: Array[String]) {
-//    运行完ETL后可以运行这个类。这个是一个实验性质的类，取某个表的数据提取特征向量，然后用逻辑回归来训练一个模型。
     conf.setAppName("Recommandation")
     val sc = new SparkContext(conf)
     val hc = new org.apache.spark.sql.hive.HiveContext(sc)
