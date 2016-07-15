@@ -13,10 +13,10 @@ object MovieTagging extends BaseConf {
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
 
     val rawMovieTag = sc.textFile("/user/hadoop/data/movietags.txt", 6).filter { !_.equals("(no genres listed)") }.map { _.replace("|", "\n") }.distinct().map(m =>MovieTag(m.trim()))
-    val movieTag = rawMovieTag.toDF()
-
-    movieTag.write.saveAsTable("mtag")
-    movieTag.show()
-    movieTag.count()
+//    val movieTag = rawMovieTag.toDF()
+//
+//    movieTag.write.saveAsTable("mtag")
+//    movieTag.show()
+//    movieTag.count()
   }
 }
