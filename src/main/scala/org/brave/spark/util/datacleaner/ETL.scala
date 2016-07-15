@@ -12,7 +12,8 @@ import org.brave.spark.caseclass.{Links, Movies, Ratings, Tags}
  * 2.配置Spark-SQL连接hive（无需安装hive,需要有HDFS）.
  *    可参考http://spark.apache.org/docs/latest/sql-programming-guide.html#hive-tables
  *    运行这个程序会先过滤掉一部分的一场数据，做一个简单的清洗，然后在spark-sql里建立4张表，
- *    分别是movies，ratings，links，tags，具体表的数据和字段可以看开发日记，里面有提，也可以看docs文件夹里的readme.txt
+ *    分别是movies，ratings，links，tags，
+ *    具体表的数据和字段可以看开发日记，里面有提，也可以看docs文件夹里的readme.txt
  */
 object ETL extends BaseConf {
   def main(args: Array[String]) {
