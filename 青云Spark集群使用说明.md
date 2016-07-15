@@ -7,7 +7,7 @@
 大家可以通过公网IP  121.201.8.24  的22端口做远程登陆。
 slave1节点可以通过master SSH过去。免密登陆。
 
-我在路由上开通了常用的Spark集群的端口，8080,4040,9000,8088，等等。
+我在路由上开通了常用的Spark集群的端口，8080,4040,9000,8088，等等。地址是: http://121.201.8.24:8080
 有需要访问集群的某个其他的端口，可以自己开：https://console.qingcloud.com/gd1/routers/rtr-sy75tycy/#，在端口转发下面，添加规则即可。
 
 目前已经安装了Spark，HDFS,kafka,zeppelin等，后面可能会用到ZK，那再说。目前Spark看大家需要，可以on yarn,standalone都行。
