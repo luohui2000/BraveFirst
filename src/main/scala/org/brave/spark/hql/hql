@@ -1,0 +1,3 @@
+#hql的脚本放在这里
+
+select userid,count(*) as c from ratings group by userid order by c desc;
