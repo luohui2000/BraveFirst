@@ -11,6 +11,7 @@ import org.brave.spark.base.BaseConf
  */
 object RunHelloWorldOnLocalServer extends BaseConf {
   def main(args: Array[String]) {
+
     conf.setAppName("RunHelloWorldOnLocalServer")
     val sc = new SparkContext(conf)
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)

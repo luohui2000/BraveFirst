@@ -5,7 +5,8 @@
       <configuration>
         <option name="compileOrder" value="JavaThenScala" />
         <option name="compilerLibraryLevel" value="Project" />
-        <option name="compilerLibraryName" value="scala-lib" />
+        <option name="compilerLibraryName" value="lib" />
+        <option name="vmOptions" value="" />
       </configuration>
     </facet>
   </component>
@@ -213,7 +214,7 @@
     <orderEntry type="library" name="Maven: org.jpmml:pmml-agent:1.1.15" level="project" />
     <orderEntry type="library" name="Maven: org.jpmml:pmml-schema:1.1.15" level="project" />
     <orderEntry type="library" name="Maven: com.sun.xml.bind:jaxb-core:2.2.7" level="project" />
-    <orderEntry type="library" name="scala-lib" level="project" />
+    <orderEntry type="library" name="lib" level="project" />
   </component>
 </module>
 
