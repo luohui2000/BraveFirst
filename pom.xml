@@ -6,9 +6,19 @@
 	<version>0.0.1-SNAPSHOT</version>
 
 	<build>
+		<sourceDirectory>src/main/scala</sourceDirectory>
+		<testSourceDirectory>src/test/java,src/test/scala</testSourceDirectory>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+			</testResource>
+		</testResources>
 
-
-		<sourceDirectory>src</sourceDirectory>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -59,12 +69,9 @@
 		</dependency>
 		<dependency>
 
-    <groupId>org.apache.spark</groupId>
-    <artifactId>spark-mllib_2.10</artifactId>
-    <version>1.6.1</version>
-</dependency>
-
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-mllib_2.10</artifactId>
+			<version>1.6.1</version>
+		</dependency>
 	</dependencies>
-
-
 </project>

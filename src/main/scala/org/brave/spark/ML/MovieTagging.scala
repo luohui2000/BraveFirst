@@ -6,8 +6,8 @@ import org.brave.spark.caseclass.MovieTag
 
 object MovieTagging extends BaseConf {
   def main(args: Array[String]) {
-    //before run this main class ,run movietag.sh first
-    //movies with tag '(no genres listed)' is not included 
+    //运行这个类之前需要先运行src/main/bash/org/brave/scripts里的movietag.sh
+    //用来提取电影的标签，并做成一张表放到Spark-sql里
     conf.setAppName("MovieTagging")
     val sc = new SparkContext(conf)
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
