@@ -2,7 +2,7 @@
 =============================
 我在余陈搭建的集群基础上做了一下修改了。绝大部分还是余陈辛苦搭建的，在此感谢下。
 青云控制台的控制台页面：https://console.qingcloud.com/gd1/instances/
-我们现在的集群有2个节点，master和slave1。可以自由加机器和资源。加资源需要关机后操作。
+我们现在的集群有2个节点，master和slave1。可以自由加机器和资源,目前已经扩容到了4核8G内存。加资源需要关机后操作。磁盘空间暂时只有20G。
 然后有一个网络，公网IP和路由，一个最简单的2层网络。公网IP绑定了路由。就是跟你家里的网络一样啦。
 大家可以通过公网IP  121.201.8.24  的22端口做远程登陆。
 slave1节点可以通过master SSH过去。免密登陆。
@@ -25,5 +25,7 @@ f=/usr/lib/flume
 k=/usr/lib/kafka
 大家可以快速访问对应的路径，例如cd $s
 
-咱们现在movielens的数据放在了master的$SPARK_HOME/data文件夹中。yelp的数据有需要再传吧。网络是按流量收费的。
-目前hivecontext还有点问题，在spark-shell里创建hivecontext对象会报错。不过好消息是bin/spark-sql是可以正常使用的，注意使用它时请注意当前路径请在$SPARK_HOME。
+咱们现在movielens的数据放在了master的$SPARK_HOME/data文件夹中，另外在hdfs://user/root/data里也有。yelp的数据有需要再传吧。网络是按流量收费的。
+目前已经安装了MYSQL，HIVE，用MYSQL管理hive的metastore.
+Spark下的hivecontext连接hive的metastore的问题也已经解决。在spark-shell里创建hivecontext对象OK了。
+bin/spark-sql是可以正常使用的，在这个里面直接可以看到咱们的表。

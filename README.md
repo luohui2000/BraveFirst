@@ -26,4 +26,3 @@ Data Storage: HDFS
 Streaming Data Flow:Kafka or Flume
 
 
-
