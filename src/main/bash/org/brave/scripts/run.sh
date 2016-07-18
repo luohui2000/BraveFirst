@@ -1,2 +1,2 @@
 #!/bin/bash
-$SPARK_HOME/bin/spark-submit --class org.brave.spark.util.datacleaner.ETL --jars $SPARK_HOME/BraveFirst.jar,$SPARK_HOME/lib/mysql-connector-java-5.1.39.jar $SPARK_HOME/BraveFirst.jar
+$SPARK_HOME/bin/spark-submit BraveFirst.jar 1000 60 5 sparkmovie 'zookeeper.connect=192.168.100.2:2181/mdata;group.id=spark-streaming-movieStream1;zookeeper.connection.timeout.ms=10000'
