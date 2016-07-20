@@ -18,6 +18,7 @@ import org.brave.spark.caseclass.{Links, Movies, Ratings, Tags}
 object ETL extends BaseConf {
   def main(args: Array[String]) {
     var filepath = "data";
+    conf.setMaster(sparkMasterRemote)
     conf.setAppName("ETL for files from " + filepath)
     val sc = new SparkContext(conf)
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
