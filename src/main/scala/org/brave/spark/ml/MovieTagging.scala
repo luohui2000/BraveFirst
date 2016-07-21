@@ -14,16 +14,20 @@ object MovieTagging extends BaseConf {
     conf.setAppName("MovieTagging")
     val sc = new SparkContext(conf)
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+    val hc = new org.apache.spark.sql.hive.HiveContext(sc)
+    import sqlContext.implicits._
 
     val rawMovieTag = sc.textFile("data/movies.txt", 6).filter {
       !_.equals("(no genres listed)")
     }.map {
       _.replace("|", "\n")
     }.distinct().map(m => MovieTag(m.trim()))
-//    val movieTag = rawMovieTag.toDF()
-//
+    val movieTag = rawMovieTag.toDF()
 //    movieTag.write.saveAsTable("mtag")
-//    movieTag.show()
-//    movieTag.count()
+    movieTag.show()
+    movieTag.count()
+    movieTag.write.parquet("/data/mtag")
+    hc.sql("CREATE TABLE IF NOT EXISTS mtag (mtag string)  STORED AS PARQUET")
+    hc.sql("LOAD DATA INPATH 'hdfs://data/mtag' OVERWRITE INTO TABLE mtag")
   }
 }

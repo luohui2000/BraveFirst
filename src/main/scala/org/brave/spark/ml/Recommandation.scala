@@ -19,7 +19,6 @@ object Recommandation extends BaseConf {
     hc.sql("cache table links")
     hc.sql("cache table tags")
 
-    //    val ratings = hc.sql("select * from ratings")
     val ratings = hc.sql("select * from ratings")
     ratings.printSchema()
     ratings.show()

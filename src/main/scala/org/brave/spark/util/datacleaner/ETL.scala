@@ -2,7 +2,7 @@ package org.brave.spark.util.datacleaner
 
 import org.apache.spark._
 import org.brave.spark.base.BaseConf
-import org.brave.spark.caseclass.{Links, Movies, Ratings, Tags}
+import org.brave.spark.caseclass.{ Links, Movies, Ratings, Tags }
 
 /**
  * 要运行这个类需要先做2件：
@@ -26,20 +26,29 @@ object ETL extends BaseConf {
     val movies = sc.textFile("data/movies.txt").map(_.split(",")).map(x => Movies(x(0).trim().toInt,
       x(1).trim(),
       x(2).trim())).toDF()
-    movies.write.saveAsTable("movies")
+    movies.write.parquet("/data/movies")
+    hc.sql("CREATE TABLE IF NOT EXISTS movies (movieId int, title string, genres string)  STORED AS PARQUET")
+    hc.sql("LOAD DATA INPATH 'hdfs://data/movies' OVERWRITE INTO TABLE movies")
+    //    movies.write.saveAsTable("movies")
 
     val ratings = sc.textFile("data/ratings.txt").map(_.split(",")).map(x => Ratings(x(0).trim().toInt,
       x(1).trim().toInt,
       x(2).trim().toFloat,
       x(3).trim().toDouble)).toDF()
-    ratings.write.saveAsTable("ratings")
+    ratings.write.parquet("/data/ratings")
+    hc.sql("CREATE TABLE IF NOT EXISTS ratings (userId int, movieId int, rating float, timestamp double)  STORED AS PARQUET")
+    hc.sql("LOAD DATA INPATH 'hdfs://data/ratings' OVERWRITE INTO TABLE ratings")
+    //    ratings.write.saveAsTable("ratings")
 
     val links = sc.textFile("data/links.txt").filter {
       !_.endsWith(",")
     }.map(_.split(",")).map(x => Links(x(0).trim().toInt,
       x(1).trim().toInt,
       x(2).trim().toInt)).toDF()
-    links.write.saveAsTable("links")
+    links.write.parquet("/data/links")
+    hc.sql("CREATE TABLE IF NOT EXISTS links (movieId int, imdbId int, tmdbId int)  STORED AS PARQUET")
+    hc.sql("LOAD DATA INPATH 'hdfs://data/links' OVERWRITE INTO TABLE links")
+    //    links.write.saveAsTable("links")
 
     val tags = sc.textFile("data/tags.txt").filter {
       !_.endsWith(",")
@@ -49,6 +58,9 @@ object ETL extends BaseConf {
       x(1).trim().toInt,
       x(2).trim(),
       x(3).trim().toDouble)).toDF()
-    tags.write.saveAsTable("tags")
+    tags.write.parquet("/data/tags")
+    hc.sql("CREATE TABLE IF NOT EXISTS tags (userId int, movieId int, tag string, timestamp double)  STORED AS PARQUET")
+    hc.sql("LOAD DATA INPATH 'hdfs://data/tags' OVERWRITE INTO TABLE tags")
+    //    tags.write.saveAsTable("tags")
   }
 }
