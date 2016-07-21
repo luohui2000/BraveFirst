@@ -29,6 +29,7 @@ object UserList extends BaseConf {
 
     val users = sc.textFile("data/ratings.txt").map(_.split(","))
         .map(x => x(0).trim().toInt)
+        .distinct()
         .filter(isNum)
         .map(z => User(z)).toDF()
     users.write.parquet("/data/users")
