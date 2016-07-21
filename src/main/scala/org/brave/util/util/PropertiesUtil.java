@@ -20,4 +20,7 @@ public class PropertiesUtil {
         }
         return properties;
     }
+    public static void main(String[] args){
+    	
+    }
 }
