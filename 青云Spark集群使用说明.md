@@ -23,6 +23,7 @@ p=/usr/lib/phoenix
 z=/usr/lib/zeppelin
 f=/usr/lib/flume
 k=/usr/lib/kafka
+t=/home/web/apache-tomcat-8.5.4 (tomcat)
 大家可以快速访问对应的路径，例如cd $s
 
 咱们现在movielens的数据放在了master的$SPARK_HOME/data文件夹中，另外在hdfs://user/root/data里也有。yelp的数据有需要再传吧。网络是按流量收费的。
