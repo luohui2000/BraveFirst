@@ -77,8 +77,8 @@ Class-Path: lib/spark-core_2.10-1.6.1.jar lib/avro-mapred-1.7.7-hadoop
  1.2.jar lib/arpack_combined_all-0.1.jar lib/breeze_2.10-0.11.2.jar li
  b/breeze-macros_2.10-0.11.2.jar lib/quasiquotes_2.10-2.0.0-M8.jar lib
  /jtransforms-2.4.0.jar lib/spire_2.10-0.7.4.jar lib/spire-macros_2.10
- -0.7.4.jar lib/pmml-model-1.1.15.jar lib/pmml-agent-1.1.15.jar lib/pm
  ml-schema-1.1.15.jar lib/jaxb-impl-2.2.7.jar lib/jaxb-core-2.2.7.jar
+ -0.7.4.jar lib/pmml-model-1.1.15.jar lib/pmml-agent-1.1.15.jar lib/pm
  lib/kafka_2.10-0.10.0.0.jar lib/zkclient-0.8.jar lib/metrics-core-2.2
  .0.jar lib/kafka-clients-0.10.0.0.jar lib/jopt-simple-4.9.jar lib/zoo
  keeper-3.4.6.jar lib/spark-streaming-kafka_2.10-1.6.1.jar lib/kafka_2

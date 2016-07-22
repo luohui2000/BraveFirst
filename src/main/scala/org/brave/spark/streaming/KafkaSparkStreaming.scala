@@ -58,7 +58,6 @@ object KafkaSparkStreaming {
       .set("spark.streaming.receiver.maxRate",maxRate)
       .set("spark.serializer","org.apache.spark.serializer.KryoSerializer")
       .set("spark.streaming.concurrentJobs",concurrentJobs)
-      .set("spark.scheduler.mode","FAIR")
       .set("spark.cleaner.ttl","480")
     //      .set("spark.streaming.receiver.writeAheadLog.enable","true")
     val ssc = new StreamingContext(sparkConf, Seconds(batchDuration))
