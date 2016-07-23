@@ -24,7 +24,7 @@ object ETL extends BaseConf {
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
     val hc = new org.apache.spark.sql.hive.HiveContext(sc)
     import sqlContext.implicits._
-    val movies = sc.textFile("data/movies.txt").map(_.split(",")).map(x => Movies(x(0).trim().toInt,
+    val movies = sc.textFile("data/movies.txt").map(splitFunc).map(x => Movies(x(0).trim().toInt,
       x(1).trim(),
       x(2).trim())).toDF()
     movies.write.parquet("/data/movies")
@@ -32,7 +32,7 @@ object ETL extends BaseConf {
     hc.sql("LOAD DATA INPATH 'hdfs://data/movies' OVERWRITE INTO TABLE movies")
     //    movies.write.saveAsTable("movies")
 
-    val ratings = sc.textFile("data/ratings.txt").map(_.split(",")).map(x => Ratings(x(0).trim().toInt,
+    val ratings = sc.textFile("data/ratings.txt").filter(!_.contains("(no genres listed)")).map(_.split(",")).map(x => Ratings(x(0).trim().toInt,
       x(1).trim().toInt,
       x(2).trim().toFloat,
       x(3).trim().toDouble)).toDF()
@@ -55,7 +55,7 @@ object ETL extends BaseConf {
       !_.endsWith(",")
     }.filter {
       !_.toString().contains('\"')
-    }.map(_.split(",")).map(x => Tags(x(0).trim().toInt,
+    }.map(splitFunc).map(x => Tags(x(0).trim().toInt,
       x(1).trim().toInt,
       x(2).trim(),
       x(3).trim().toDouble)).toDF()
@@ -63,5 +63,16 @@ object ETL extends BaseConf {
     hc.sql("CREATE TABLE IF NOT EXISTS tags (userId int, movieId int, tag string, timestamp double)  STORED AS PARQUET")
     hc.sql("LOAD DATA INPATH 'hdfs://data/tags' OVERWRITE INTO TABLE tags")
     //    tags.write.saveAsTable("tags")
+  }
+
+  def splitFunc: String => Array[String] = line => {
+
+    if(line.contains("\"")){
+      val arr = line.split("\"")
+      Array(arr(0).substring(0,arr(0).length-1),arr(1),arr(2).substring(1,arr(2).length))
+    } else {
+      line.split(",")
+    }
+
   }
 }
