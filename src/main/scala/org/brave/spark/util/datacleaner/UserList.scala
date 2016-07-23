@@ -3,7 +3,6 @@ package org.brave.spark.util.datacleaner
 import org.apache.spark.SparkContext
 import org.apache.spark._
 import org.brave.spark.base.BaseConf
-import org.brave.spark.base.BaseConf
 import org.brave.spark.caseclass._
 import org.brave.spark.util.datacleaner.ETL._
 
