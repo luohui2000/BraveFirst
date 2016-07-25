@@ -24,7 +24,7 @@ object Producer extends BaseConf {
     val producer = new KafkaProducer[String, String](props)
 
     while (true) {
-      val messages = new ProducerRecord[String, String](topic, Source.fromFile("./data/ratings_streaming/").getLines.mkString(" "))
+      val messages = new ProducerRecord[String, String](topic, Source.fromFile("~/data/ratings_streaming/").getLines.mkString(" "))
       producer.send(messages)
       println(messages)
       Thread.sleep(100)
