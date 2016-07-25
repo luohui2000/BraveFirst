@@ -5,7 +5,7 @@ import org.apache.spark.mllib.recommendation.{Rating, ALS, MatrixFactorizationMo
 import org.apache.spark.rdd.RDD
 import org.brave.spark.base.BaseConf
 
-object myETL extends BaseConf {
+object Model extends BaseConf {
   def main(args: Array[String]): Unit = {
     val filepath = "data/"
     conf.setAppName("Collaborative Filtering ")
@@ -92,9 +92,8 @@ object myETL extends BaseConf {
     val userNotSeenList = sc.parallelize(movieMenu.keys.filter(userHaveSeenID.contains(_)).toSeq)//用户没看过的电影列表
 
     bestModel.predict(userNotSeenList.map((0, _))).collect().sortBy(_.rating).take(10).foreach(println)//预测评分前十打印出来
-
-
-    /**方差计算函数：使用上面训练好的模型来验证数据集进行预测，预测的结果和验证数据集进行
+  }
+      /**方差计算函数：使用上面训练好的模型来验证数据集进行预测，预测的结果和验证数据集进行
       *  join之后计算评分的方差并返回
       */
     def rnse(model: MatrixFactorizationModel, predictionData: RDD[Rating], n: Long): Double = {
@@ -103,5 +102,4 @@ object myETL extends BaseConf {
         .join(predictionData.map(x => ((x.user, x.product), x.rating))).values
       math.sqrt(preditionAndOldRatings.map(x => (x._1 - x._2) * (x._1 - x._2)).reduce(_ - _) / n)
     }
-  }
 }
