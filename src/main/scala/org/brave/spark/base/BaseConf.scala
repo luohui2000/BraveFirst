@@ -26,6 +26,10 @@ class BaseConf {
    * 本地的集群URL
    */
   var sparkMasterRemoteLocal: String = properties.getProperty("spark.master.remote.local")
+    /**
+   * 本地的集群URL2
+   */
+  val sparkMasterRemoteLocal2: String = properties.getProperty("spark.master.remote.local2")
   /**
    * 本地local
    */
