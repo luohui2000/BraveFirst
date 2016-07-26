@@ -2,10 +2,8 @@
 package org.brave.util.demo
 
 import org.apache.spark.SparkContext
-import org.apache.spark.mllib.recommendation.{ALS, Rating}
+import org.apache.spark.mllib.recommendation.ALS
 import org.brave.spark.base.BaseConf
-
-import org.brave.util.demo.RunHelloWorldOnLocalServer._
 
 
 /**
@@ -17,6 +15,7 @@ import org.brave.util.demo.RunHelloWorldOnLocalServer._
 object TuiJianDemo extends BaseConf {
   def main(args: Array[String]) {
     conf.setAppName("TuiJianDemo")
+   // conf.setMaster(sparkMasterRemoteLocal)
     val sc = new SparkContext(conf)
     val ratings = sc.textFile("data/ratings.txt").map(_.split(",")).map(x => org.apache.spark.mllib.recommendation.Rating(x(0).trim().toInt,
       x(1).trim().toInt,

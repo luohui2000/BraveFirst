@@ -21,10 +21,11 @@ package org.brave.util.demo
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.sql.functions._
+import org.brave.spark.base.BaseConf
 
-object RDDRelation {
+object RDDRelation extends BaseConf{
   def main(args: Array[String]) {
-    val conf = new SparkConf().setMaster("local").setAppName("map")
+    conf.setAppName("RDDRelation")
     val sc = new SparkContext(conf)
     val rdd = sc.parallelize(1 to 10) //创建RDD
 

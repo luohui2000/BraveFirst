@@ -6,6 +6,7 @@ import org.apache.spark.api.java.function.Function;
 import org.apache.spark.sql.DataFrame;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SQLContext;
+import org.brave.spark.base.BaseConf;
 
 import java.util.List;
 
@@ -13,14 +14,12 @@ import java.util.List;
  * Created by yuchen
  * on 2016-07-06.
  */
-public class MySqlJdbcReader {
+public class MySqlJdbcReader extends BaseConf{
 
     public static void main(String[] args) {
         SparkConf conf = new SparkConf();
-        conf.setMaster("local[2]");
+        conf.setMaster("local[6]");
         conf.setAppName("sparksql---jdbc--mysql");
-        conf.set("spark.executor.memory", "2g");
-        conf.set("spark.cores.max", "2");
         conf.setJars(new String[]{"mysql-connector-java-5.1.31.jar"});
         SparkContext sc = new SparkContext(conf);
         SQLContext sqlContext = new SQLContext(sc);
@@ -42,7 +41,9 @@ public class MySqlJdbcReader {
         // countsByAge.show();
 
         df.registerTempTable("todo627");
-        DataFrame teenagers = sqlContext.sql("SELECT keyword,click FROM todo627 WHERE click >= 50 order by click desc limit 50");
+        DataFrame teenagers = sqlContext.
+                sql("SELECT keyword,click FROM todo627 " +
+                        "WHERE click >= 50 order by click desc limit 50");
 
 // The results of SQL queries are DataFrames and support all the normal RDD operations.
 // The columns of a row in the result can be accessed by ordinal.

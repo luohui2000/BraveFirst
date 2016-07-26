@@ -15,11 +15,16 @@ object RunHelloWorldOnLocalServer extends BaseConf {
     conf.setAppName("RunHelloWorldOnLocalServer")
     val sc = new SparkContext(conf)
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
-    val df = sqlContext.read.json(demoFilePathLocal)
-    df.show()
-    df.printSchema();
-    df.registerTempTable("demo")
-    var peopleName = sqlContext.sql("select  *  from demo  ")
-    peopleName.collect().foreach(println)
+    val df = sc.textFile("hdfs://master:9000/logs/demo.json")
+    //val df = sqlContext.read.json(demoFilePathLocal)
+    //df.show()
+    //df.printSchema();
+   // df.registerTempTable("demo")
+   // var peopleName = sqlContext.sql("select  qq,count(qq)  from demo  group by qq having(count(qq)>1) limit 100")
+    //df(println)
+
+
+    //val count=file.flatMap(line => line.split(" ")).map(word => (word,1)).reduceByKey(_+_)
+
   }
 }
