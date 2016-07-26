@@ -1,29 +1,31 @@
-<!DOCTYPE html>
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="ThemeBucket">
     <link rel="shortcut icon" href="#" type="image/png">
     <title>推荐</title>
-    <link href="css/style.css" rel="stylesheet">
-    <link href="css/style-responsive.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+    <link href="/css/style-responsive.css" rel="stylesheet">
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-    <script src="js/html5shiv.js"></script>
-    <script src="js/respond.min.js"></script>
+    <script src="/js/html5shiv.js"></script>
+    <script src="/js/respond.min.js"></script>
+    <script src="/js/module/recommandation.js"></script>
     <![endif]-->
+
 </head>
 <body class="sticky-header">
 <section>
     <div class="left-side sticky-left-side">
         <!--logo and iconic logo start-->
         <div class="logo">
-            <a href="index.html"><img src="images/logo.png" alt=""></a>
+            <a href="index.html"><img src="/images/logo.png" alt=""></a>
         </div>
         <div class="logo-icon text-center">
-            <a href="index.html"><img src="images/logo_icon.png" alt=""></a>
+            <a href="index.html"><img src="/images/logo_icon.png" alt=""></a>
         </div>
         <!--logo and iconic logo end-->
         <div class="left-side-inner">
@@ -48,33 +50,38 @@
             <div class="row">
                 <div class="col-sm-12">
                     <section class="panel">
-                        <form class="searchform" style="left: 50px" action="index.html" method="post">
-                            <input type="text" style="width: 300px" name="keyword" placeholder="请输入用户ID"/>
-                            <input type="submit" class="btn btn-danger" style="width: 50px" value="推荐"/>
+                        <form action="" class="searchform" style="left: 50px" action="index.html" method="post">
+                            <input type="text" style="width: 300px" id="userId" name="userId" placeholder="请输入用户ID"/>
+                            <input type="button"
+                                   onclick='getUserMoviceList()'
+                                   class="btn btn-danger" style="width: 50px" value="推荐"/>
                         </form>
                         <div class="panel-body">
                             <div id="gallery" class="media-gal">
                                 <div class="images item ">
                                     <a href="#myModal" data-toggle="modal">
-                                        <img src="images/gallery/image1.jpg" alt=""/>
+                                        <img src="/images/gallery/image1.jpg" alt=""/>
                                     </a>
+
                                     <p>Lawnmower Man </p>
                                 </div>
                                 <div class=" audio item ">
                                     <a href="#myModal" data-toggle="modal">
-                                        <img src="images/gallery/image2.jpg" alt=""/>
+                                        <img src="/images/gallery/image2.jpg" alt=""/>
                                     </a>
+
                                     <p>French Twist</p>
                                 </div>
                                 <div class=" video item ">
                                     <a href="#myModal" data-toggle="modal">
-                                        <img src="images/gallery/image3.jpg" alt=""/>
+                                        <img src="/images/gallery/image3.jpg" alt=""/>
                                     </a>
+
                                     <p>Angels and Insects </p>
                                 </div>
                                 <div class=" images audio item ">
                                     <a href="#myModal" data-toggle="modal">
-                                        <img src="images/gallery/image4.jpg" alt=""/>
+                                        <img src="/images/gallery/image4.jpg" alt=""/>
                                     </a>
 
                                     <p>Unforgettable</p>
@@ -82,52 +89,58 @@
 
                                 <div class=" images documents item ">
                                     <a href="#myModal" data-toggle="modal">
-                                        <img src="images/gallery/image5.jpg" alt=""/>
+                                        <img src="/images/gallery/image5.jpg" alt=""/>
                                     </a>
+
                                     <p>Anne Frank Remembered </p>
                                 </div>
                                 <div class=" audio item ">
                                     <a href="#myModal" data-toggle="modal">
-                                        <img src="images/gallery/image1.jpg" alt=""/>
+                                        <img src="/images/gallery/image1.jpg" alt=""/>
                                     </a>
+
                                     <p>Lawnmower Man </p>
                                 </div>
                                 <div class=" documents item ">
                                     <a href="#myModal" data-toggle="modal">
-                                        <img src="images/gallery/image2.jpg" alt=""/>
+                                        <img src="/images/gallery/image2.jpg" alt=""/>
                                     </a>
+
                                     <p>French Twist </p>
                                 </div>
                                 <div class=" video item ">
                                     <a href="#myModal" data-toggle="modal">
-                                        <img src="images/gallery/image3.jpg" alt=""/>
+                                        <img src="/images/gallery/image3.jpg" alt=""/>
                                     </a>
+
                                     <p>Angels and Insects </p>
                                 </div>
                                 <div class=" images item ">
                                     <a href="#myModal" data-toggle="modal">
-                                        <img src="images/gallery/image4.jpg" alt=""/>
+                                        <img src="/images/gallery/image4.jpg" alt=""/>
                                     </a>
 
                                     <p>Unforgettable</p>
                                 </div>
                                 <div class=" documents item ">
                                     <a href="#myModal" data-toggle="modal">
-                                        <img src="images/gallery/image5.jpg" alt=""/>
+                                        <img src="/images/gallery/image5.jpg" alt=""/>
                                     </a>
+
                                     <p>Anne Frank Remembered </p>
                                 </div>
                                 <div class=" video item ">
                                     <a href="#myModal" data-toggle="modal">
-                                        <img src="images/gallery/image1.jpg" alt=""/>
+                                        <img src="/images/gallery/image1.jpg" alt=""/>
                                     </a>
 
-                                    <p>Lawnmower Man  </p>
+                                    <p>Lawnmower Man </p>
                                 </div>
                                 <div class=" audio images item ">
                                     <a href="#myModal" data-toggle="modal">
-                                        <img src="images/gallery/image2.jpg" alt=""/>
+                                        <img src="/images/gallery/image2.jpg" alt=""/>
                                     </a>
+
                                     <p>French Twist </p>
                                 </div>
                             </div>
@@ -141,8 +154,30 @@
 </section>
 
 <!-- Placed js at the end of the document so the pages load faster -->
-<script src="js/jquery-1.10.2.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/modernizr.min.js"></script>
+<script src="/js/jquery-1.10.2.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/modernizr.min.js"></script>
+<script>
+    function getUserMoviceList() {
+        var userId = $("#userId").val();
+        var alertString = "推荐结果：\n\n";
+        $.ajax({
+            url: "getUserMoviceList.do?userId=" + userId,
+            type: "POST",
+            async: false,
+            cache: true,
+            success: function (dataJson) {
+                //var dataJson = $.parseJSON(dataJson);
+                $.each(dataJson, function (index, item) {
+                    alertString += ("用户：【" + item.user_id + "】," + "电影名称" + (index + 1) + ":【" + item.moive_name) + "】\n";
+                });
+                alert(alertString);
+
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            }
+        });
+    }
+</script>
 </body>
 </html>
