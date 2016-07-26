@@ -7,9 +7,8 @@ import org.apache.kafka.clients.producer._
 
 import org.brave.spark.base.BaseConf
 
-object Producer extends BaseConf {
+object Producer{
   def main(args: Array[String]) {
-    conf.setAppName("Producer")
     val Array(brokers, topic, messagesPerSec, wordsPerMessage) = Array("master:9092", "test", "200", "200")
     val props = new Properties()
     props.put("bootstrap.servers", "master60:9092")
@@ -24,7 +23,7 @@ object Producer extends BaseConf {
     val producer = new KafkaProducer[String, String](props)
 
     while (true) {
-      val messages = new ProducerRecord[String, String](topic, Source.fromFile("~/data/ratings_streaming/").getLines.mkString(" "))
+      val messages = new ProducerRecord[String, String](topic, Source.fromFile("E://ratings_streaming//").getLines.mkString(" "))
       producer.send(messages)
       println(messages)
       Thread.sleep(100)

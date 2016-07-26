@@ -48,6 +48,6 @@ class BaseConf {
   var demoFilePathLocal: String = properties.getProperty("demo.file.path.local")
 
   val conf = new SparkConf()
-  conf.setMaster(sparkMasterLocal)
+  conf.setMaster(sparkMasterRemoteLocal2)
   conf.set("spark.executor.memory", sparkDriverMemory)
 }
