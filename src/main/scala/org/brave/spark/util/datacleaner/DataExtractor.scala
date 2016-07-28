@@ -54,11 +54,12 @@ object DataExtractor extends BaseConf {
     streamingData.unpersist()*/
     
     //保存成新表
-    trainingData.saveAsTable(s"${tableName}_training")
-    batchData.saveAsTable(s"${tableName}_batch")
-    streamingData.saveAsTable(s"${tableName}_streaming")
-    streamingData.write.save(s"/data/${tableName}_streaming")
-
-    
+    hc.sql(s"drop table ${tableName}_training")
+    hc.sql(s"drop table ${tableName}_batch")
+    hc.sql(s"drop table ${tableName}_streaming")
+    trainingData.write.saveAsTable(s"${tableName}_training")
+    batchData.write.saveAsTable(s"${tableName}_batch")
+    streamingData.write.saveAsTable(s"${tableName}_streaming")
+    streamingData.write.text(s"/data/${tableName}_streaming")
   }
 }

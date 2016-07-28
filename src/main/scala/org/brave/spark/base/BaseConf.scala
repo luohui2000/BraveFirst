@@ -49,5 +49,5 @@ class BaseConf {
 
   val conf = new SparkConf()
   conf.setMaster(sparkMasterRemoteLocal2)
-  conf.set("spark.executor.memory", sparkDriverMemory)
+  conf.set("spark.driver.memory", sparkDriverMemory)
 }

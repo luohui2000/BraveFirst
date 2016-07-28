@@ -1,5 +1,6 @@
 package org.brave.spark.streaming
 
+import org.apache.spark._
 import java.util.Properties
 import scala.io._
 import kafka.producer._
@@ -7,8 +8,10 @@ import org.apache.kafka.clients.producer._
 
 import org.brave.spark.base.BaseConf
 
-object Producer{
+object Producer extends BaseConf{
   def main(args: Array[String]) {
+        conf.setAppName("Producer")
+    val sc = new SparkContext(conf)
     val Array(brokers, topic, messagesPerSec, wordsPerMessage) = Array("master:9092", "test", "200", "200")
     val props = new Properties()
     props.put("bootstrap.servers", "master60:9092")
@@ -19,15 +22,17 @@ object Producer{
 //    props.put("buffer.memory", 33554432)
     props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
     props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
+    props.put("akka.version", "2.3.15")
 
     val producer = new KafkaProducer[String, String](props)
+    val file = sc.textFile("/data/ratings_streaming")
 
     while (true) {
-      val messages = new ProducerRecord[String, String](topic, Source.fromFile("E://ratings_streaming//").getLines.mkString(" "))
+      val str = file.take(1).apply(0)
+      val messages = new ProducerRecord[String, String](topic, str)
       producer.send(messages)
       println(messages)
       Thread.sleep(100)
     }
   }
-
 }
