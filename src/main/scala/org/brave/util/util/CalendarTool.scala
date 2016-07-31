@@ -19,4 +19,11 @@ class CalendarTool {
     val yesterday = format.format(cal.getTime)
     yesterday
   }
+  
+  def getCurrentTime: String = {
+    val now = new Date()
+    val format = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss")
+    val CurrentTime = format.format(now)
+    CurrentTime
+  }
 }

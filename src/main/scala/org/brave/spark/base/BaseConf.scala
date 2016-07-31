@@ -50,6 +50,14 @@ class BaseConf {
    * Hadoop的安装路径
    */
   val hadoop_home: String = properties.getProperty("hadoop.home")
+    /**
+   * kafka producer每条发送记录的条数
+   */
+  val messagesPerBatch: String = properties.getProperty("kafka.messagePerBatch")
+    /**
+   * Hadoop的安装路径
+   */
+  val batchInterval: String = properties.getProperty("kafka.batch.interval")
 
   val conf = new SparkConf()
   conf.setMaster(sparkMasterRemoteLocal2)
