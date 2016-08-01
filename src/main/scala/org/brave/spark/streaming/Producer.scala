@@ -12,7 +12,7 @@ import org.brave.util.util.CalendarTool
 /*
  * 运行此类之前，需要先运行DataExtractor类。
  * 读取DataExtractor产生的ratings_streaming数据，把它按照一定的速率打入到kafka消息队列里。
- * 把producer通过spark-submit提交到Spark集群运行，即可正常发送消息。
+ * 把producer通过spark-submit提交到Spark集群运行，即可正常发送消息。通过Producer.sh来运行。
  * 如果以java -jar的方式，会出现异常com.typesafe.config.ConfigException$Missing: No configuration setting found for key 'akka.version'
  * 
  */
