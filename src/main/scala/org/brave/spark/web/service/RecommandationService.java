@@ -10,6 +10,7 @@ import java.util.List;
 /**
  * Created by yuchen
  * on 2016/7/26 0026.
+ * 更新了文件的编码格式，从GBK改为UTF-8
  */
 
 public class RecommandationService {
