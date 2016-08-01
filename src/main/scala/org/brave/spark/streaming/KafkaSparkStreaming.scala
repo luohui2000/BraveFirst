@@ -1,10 +1,17 @@
 package org.brave.spark.streaming
 
+import java.util.Properties
+
 import kafka.serializer.StringDecoder
 import org.apache.spark.SparkConf
+import org.apache.spark.sql.{Row, SQLContext}
+import org.apache.spark.sql.types.{DoubleType, IntegerType, StructField, StructType}
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming._
 import org.apache.spark.streaming.kafka._
+import org.apache.spark.mllib.recommendation.{MatrixFactorizationModel, Rating}
+import org.json.JSONObject
+
 
 /**
   * Created by JasonHong on 2016/7/16.
@@ -66,11 +73,46 @@ object KafkaSparkStreaming {
 
 
     kafkaStream.foreachRDD { rdd =>
-      rdd.saveAsTextFile("/data/movieStream")
+
+      val sqlContext = SQLContext.getOrCreate(rdd.sparkContext)
+
+      val ratingRdd = rdd.mapPartitions( par => {
+
+        val ALSModel = MatrixFactorizationModel.load(rdd.sparkContext, "/user/root/model/myCollaborativeFilter20160721/")
+        par.map(jsonUserProduct).map( arr =>
+          Row(arr(0),arr(1),ALSModel.predict(arr(0), arr(1)))
+        )
+
+      })
+
+      val schema = new StructType(
+        Array(StructField("userid",IntegerType,true),
+        StructField("productid",IntegerType,true),
+        StructField("rating",DoubleType,true)))
+
+      sqlContext.createDataFrame(ratingRdd,schema).write.jdbc("mysql-url","table",dbProperties("user","pass"))
+
+//      rdd.saveAsTextFile("/data/movieStream")
 
     }
 
     ssc
+  }
+
+  def jsonUserProduct(json: String): Array[Int] = {
+
+    val jsonob = new JSONObject(json)
+
+    Array(jsonob.getInt("userid"), jsonob.getInt("productid"))
+
+  }
+
+  def dbProperties(username: String, password: String): Properties = {
+
+    val prop = new Properties()
+    prop.setProperty("username",username)
+    prop.setProperty("password",password)
+    prop
   }
 
 
