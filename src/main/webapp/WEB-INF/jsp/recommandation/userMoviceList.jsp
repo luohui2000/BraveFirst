@@ -9,11 +9,14 @@
     <title>推荐</title>
     <link href="/css/style.css" rel="stylesheet">
     <link href="/css/style-responsive.css" rel="stylesheet">
+
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
     <script src="/js/html5shiv.js"></script>
     <script src="/js/respond.min.js"></script>
     <script src="/js/module/recommandation.js"></script>
+
+
     <![endif]-->
 
 </head>
@@ -58,91 +61,7 @@
                         </form>
                         <div class="panel-body">
                             <div id="gallery" class="media-gal">
-                                <div class="images item ">
-                                    <a href="#myModal" data-toggle="modal">
-                                        <img src="/images/gallery/image1.jpg" alt=""/>
-                                    </a>
 
-                                    <p>Lawnmower Man </p>
-                                </div>
-                                <div class=" audio item ">
-                                    <a href="#myModal" data-toggle="modal">
-                                        <img src="/images/gallery/image2.jpg" alt=""/>
-                                    </a>
-
-                                    <p>French Twist</p>
-                                </div>
-                                <div class=" video item ">
-                                    <a href="#myModal" data-toggle="modal">
-                                        <img src="/images/gallery/image3.jpg" alt=""/>
-                                    </a>
-
-                                    <p>Angels and Insects </p>
-                                </div>
-                                <div class=" images audio item ">
-                                    <a href="#myModal" data-toggle="modal">
-                                        <img src="/images/gallery/image4.jpg" alt=""/>
-                                    </a>
-
-                                    <p>Unforgettable</p>
-                                </div>
-
-                                <div class=" images documents item ">
-                                    <a href="#myModal" data-toggle="modal">
-                                        <img src="/images/gallery/image5.jpg" alt=""/>
-                                    </a>
-
-                                    <p>Anne Frank Remembered </p>
-                                </div>
-                                <div class=" audio item ">
-                                    <a href="#myModal" data-toggle="modal">
-                                        <img src="/images/gallery/image1.jpg" alt=""/>
-                                    </a>
-
-                                    <p>Lawnmower Man </p>
-                                </div>
-                                <div class=" documents item ">
-                                    <a href="#myModal" data-toggle="modal">
-                                        <img src="/images/gallery/image2.jpg" alt=""/>
-                                    </a>
-
-                                    <p>French Twist </p>
-                                </div>
-                                <div class=" video item ">
-                                    <a href="#myModal" data-toggle="modal">
-                                        <img src="/images/gallery/image3.jpg" alt=""/>
-                                    </a>
-
-                                    <p>Angels and Insects </p>
-                                </div>
-                                <div class=" images item ">
-                                    <a href="#myModal" data-toggle="modal">
-                                        <img src="/images/gallery/image4.jpg" alt=""/>
-                                    </a>
-
-                                    <p>Unforgettable</p>
-                                </div>
-                                <div class=" documents item ">
-                                    <a href="#myModal" data-toggle="modal">
-                                        <img src="/images/gallery/image5.jpg" alt=""/>
-                                    </a>
-
-                                    <p>Anne Frank Remembered </p>
-                                </div>
-                                <div class=" video item ">
-                                    <a href="#myModal" data-toggle="modal">
-                                        <img src="/images/gallery/image1.jpg" alt=""/>
-                                    </a>
-
-                                    <p>Lawnmower Man </p>
-                                </div>
-                                <div class=" audio images item ">
-                                    <a href="#myModal" data-toggle="modal">
-                                        <img src="/images/gallery/image2.jpg" alt=""/>
-                                    </a>
-
-                                    <p>French Twist </p>
-                                </div>
                             </div>
                         </div>
                     </section>
@@ -155,6 +74,7 @@
 
 <!-- Placed js at the end of the document so the pages load faster -->
 <script src="/js/jquery-1.10.2.min.js"></script>
+
 <script src="/js/bootstrap.min.js"></script>
 <script src="/js/modernizr.min.js"></script>
 <script>
@@ -168,10 +88,17 @@
             cache: true,
             success: function (dataJson) {
                 //var dataJson = $.parseJSON(dataJson);
+                $("#gallery").children("div").remove();
                 $.each(dataJson, function (index, item) {
                     alertString += ("用户：【" + item.user_id + "】," + "电影名称" + (index + 1) + ":【" + item.moive_name) + "】\n";
+
+                    var str = " <div class=' audio images item '>";
+                    str+="  <a target= _blank href='"+item.moive_url+"'  data-toggle='modal'>";
+                    str+="  <img src='"+item.moive_img_url+"' alt='"+item.moive_name+"'/> </a>";
+                    str+="  <p>"+item.moive_name+" </p></div>";
+                    $("#gallery").prepend(str)
                 });
-                alert(alertString);
+               // alert(alertString);
 
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {

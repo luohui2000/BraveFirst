@@ -28,7 +28,7 @@ public class RecommandationBo {
     /**
      * 电影地址
      */
-    private String movie_url;
+    private String moive_url;
 
 
 
@@ -72,11 +72,11 @@ public class RecommandationBo {
         this.moive_img_url = moive_img_url;
     }
 
-    public String getMovie_url() {
-        return movie_url;
+    public String getMoive_url() {
+        return moive_url;
     }
 
-    public void setMovie_url(String movie_url) {
-        this.movie_url = movie_url;
+    public void setMoive_url(String moive_url) {
+        this.moive_url = moive_url;
     }
 }

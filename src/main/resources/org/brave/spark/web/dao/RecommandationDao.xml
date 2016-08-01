@@ -4,12 +4,58 @@
 <mapper namespace="org.brave.spark.web.dao.RecommandationDao">
 
     <select id="getRecommandationMoviesByUserId"  resultType="org.brave.spark.web.bo.RecommandationBo">
+       select
+       umr.user_id,
+       umr.moive_id,
+       m.moive_name as moive_name,
+       mu.img_url as moive_img_url,
+       mu.moive_url as moive_url
+        FROM
+        user_moive_recommandation umr
+        left join moive_url mu on umr.moive_id=mu.moive_id
+        left join moive m on umr.moive_id=m.moive_id
+        WHERE
+        umr.user_id =  #{param1}
+    </select>
+
+
+    <insert id="saveMoiveUrls">
+        INSERT INTO moive_url (
+        moive_id,
+        moive_url,
+         img_url
+        )
+        VALUES (
+        #{param1},
+        #{param2},
+        #{param3}
+        );
+    </insert>
+
+
+    <select id="getMoiveLinks"  resultType="org.brave.spark.web.bo.MoiveLinkBo">
         SELECT
         *
         FROM
-        user_moive_recommandation
+        moive_links
         WHERE
-        user_id =  #{param1}
+        state is null limit 200;
+    </select>
+
+    <update id="updateMoiveLinkStateByMoiveId" >
+        update moive_links
+        set state='1'
+        where moive_id=#{param1};
+    </update>
+
+
+    <select id="getMoiveLinkByMoiveId"  resultType="org.brave.spark.web.bo.MoiveLinkBo">
+        SELECT
+        *
+        FROM
+        moive_links
+        WHERE
+        moive_id =#{param1};
     </select>
 
 
