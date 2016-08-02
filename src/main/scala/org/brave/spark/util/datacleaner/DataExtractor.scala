@@ -60,6 +60,6 @@ object DataExtractor extends BaseConf {
     trainingData.write.saveAsTable(s"${tableName}_training")
     batchData.write.saveAsTable(s"${tableName}_batch")
     streamingData.write.saveAsTable(s"${tableName}_streaming")
-    streamingData.write.text(s"/data/${tableName}_streaming")
+    streamingData.write.json(s"/data/${tableName}_streaming")
   }
 }
