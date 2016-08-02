@@ -17,7 +17,7 @@ import org.brave.util.util._
  * 取某个表的数据提取特征向量，然后用ALS来训练一个模型。
  * BASED ON https://github.com/apache/spark/blob/master/examples/src/main/scala/org/apache/spark/examples/mllib/RecommendationExample.scala
  */
-object Recommandation {
+object Recommandation extends BaseConf{
   def main(args: Array[String]) {
     if (args.length < 2) {
       System.err.print(s"""
@@ -34,7 +34,6 @@ object Recommandation {
     val randomNumber2 = scala.util.Random.nextInt().%(5)
     val randomResultNum = if (randomNumber2 > 0) randomNumber2 + 1 else -randomNumber2 + 1
 
-    val conf = new SparkConf().setMaster("spark://master:7077")
     conf.setAppName("Recommandation")
     val sc = new SparkContext(conf)
     val hc = new org.apache.spark.sql.hive.HiveContext(sc)
@@ -102,7 +101,7 @@ object Recommandation {
     val today = ct.getToday
 
     //模型的保存和加载
-    //    model.save(sc, s"model/myCollaborativeFilter$today")
+        model.save(sc, s"model/myCollaborativeFilter$today")
     //    val safedModel = MatrixFactorizationModel.load(sc, s"model/myCollaborativeFilter$today")
   }
 }
