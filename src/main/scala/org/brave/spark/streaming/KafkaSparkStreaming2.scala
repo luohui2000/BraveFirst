@@ -39,9 +39,10 @@ object KafkaSparkStreaming2 extends BaseConf {
     ssc.checkpoint(checkpointDirectory)
     val topicMap = topics.split(",").map((_, numThreads.toInt)).toMap
     val kafkaStream = KafkaUtils.createStream(ssc, zkQuorum, group, topicMap, storageLevel)
-    val schema = new StructType(
-      Array(StructField("userid", IntegerType, true),
-        StructField("productid", StringType, true)))
+      val schema = new StructType(
+        Array(StructField("userid",IntegerType,true),
+        StructField("productid",IntegerType,true),
+        StructField("rating",DoubleType,true)))
 
     kafkaStream.foreachRDD { rdd =>
       val sqlContext = SQLContext.getOrCreate(rdd.sparkContext)
@@ -68,6 +69,7 @@ object KafkaSparkStreaming2 extends BaseConf {
         for(i <- 0 to 9){
           println("MovieID:" +  result(i).product + "|Rating:" + result(i).rating)
         }
+        
       }
 
       //实时为用户推荐10部电影,存在在map中又调用了transformation的问题。
