@@ -5,7 +5,7 @@ import java.util.Properties
 import kafka.serializer.StringDecoder
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.{ Row, SQLContext }
-import org.apache.spark.sql.types.{ DoubleType, IntegerType, StructField, StructType,StringType }
+import org.apache.spark.sql.types.{ DoubleType, IntegerType, StructField, StructType, StringType }
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming._
 import org.apache.spark.streaming.kafka._
@@ -20,18 +20,18 @@ import org.brave.spark.base.BaseConf
 object KafkaSparkStreaming2 extends BaseConf {
 
   def main(args: Array[String]) {
-//    if (args.length < 5) {
-//      System.err.print(s"""
-//                          |Usage: KafkaSparkStreaming <zkQuorum> <group> <topics> <numThreads>
-//        """.stripMargin)
-//      System.exit(1)
-//    }
+    if (args.length < 4) {
+      System.err.print(s"""
+                          |Usage: KafkaSparkStreaming <zkQuorum> <group> <topics> <numThreads>
+        """.stripMargin)
+      System.exit(1)
+    }
 
     val Array(zkQuorum, group, topics, numThreads) = args
-    println("zkQuorum:"+zkQuorum)
-    println("group:"+group)
-    println("topics:"+topics)
-    println("numThreads:"+numThreads)
+    println("zkQuorum:" + zkQuorum)
+    println("group:" + group)
+    println("topics:" + topics)
+    println("numThreads:" + numThreads)
     conf.setAppName("KafkaStreaming")
     val storageLevel = StorageLevel.DISK_ONLY
     val ssc = new StreamingContext(conf, Seconds(batchInterval.toInt / 1000))
@@ -46,14 +46,47 @@ object KafkaSparkStreaming2 extends BaseConf {
     kafkaStream.foreachRDD { rdd =>
       val sqlContext = SQLContext.getOrCreate(rdd.sparkContext)
       val ALSModel = MatrixFactorizationModel.load(rdd.sparkContext, "/user/hadoop/model/myCollaborativeFilter20160802/")
-      rdd.keys.first()
-      sqlContext.read.json(rdd.keys).printSchema()
-      val ratingRdd = sqlContext.read.json(rdd.keys).foreach(r => 
-        println(r)
-//        println(ALSModel.predict(r.getInt(0),5))
-      )
-//      sqlContext.createDataFrame(ratingRdd, schema).write.jdbc(url, table, connectionProperties)
-//      sqlContext.createDataFrame(ratingRdd, schema).collect().foreach { println}
+      val recDF = sqlContext.read.json(rdd.values)
+      val recTuple2RDD = sqlContext.read.json(rdd.values).map { x => Tuple2(x.getLong(3).toInt, x.getLong(0).toInt) }
+      recDF.persist()
+      recTuple2RDD.persist()
+
+      //实时预测用户对电影的评分
+      /*      val predictedRatings = ALSModel.predict(recTuple2RDD)
+      predictedRatings.collect.foreach(println)*/
+
+      //实时为用户推荐10部电影,用迭代器的方式，避免在一个RDD的transformation里调用recommandproduct时报异常的问题
+      recDF.printSchema()
+      val useridRDD = recDF.select("userid").map(_.mkString)
+      val useridItr = useridRDD.toLocalIterator
+      var tmpuserid = ""
+      while (useridItr.hasNext) {
+        tmpuserid = useridItr.next()
+        println("the user id is:" + tmpuserid)
+        val result = ALSModel.recommendProducts(tmpuserid.trim.toInt, 10)
+        println("The recommanded Movies for user " + tmpuserid + " are:\n")
+        for(i <- 0 to 9){
+          println("MovieID:" +  result(i).product + "|Rating:" + result(i).rating)
+        }
+      }
+
+      //实时为用户推荐10部电影,存在在map中又调用了transformation的问题。
+      /*      val getRecResult = org.apache.spark.sql.functions.udf((x: Long) =>
+        ALSModel.recommendProducts(x.toInt, 10).mkString
+        )
+      recDF.printSchema()
+      println("input data:")
+      recDF.collect.foreach(println)
+      val resultDF2 = recDF.map { x =>
+        ALSModel.recommendProducts(x.getLong(3).toInt, 10)
+      }
+      val resultDF = recDF.withColumn("recommandresult", getRecResult(recDF.col("userid")))
+      println("output result:")
+      resultDF.collect.foreach(println)
+      resultDF2.collect.foreach(println)*/
+
+      recDF.unpersist()
+      recTuple2RDD.unpersist()
     }
     ssc.start()
     ssc.awaitTermination()

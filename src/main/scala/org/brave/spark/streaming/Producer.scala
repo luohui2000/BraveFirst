@@ -39,9 +39,10 @@ object Producer extends BaseConf {
     while(true) {
       val itr = file.toLocalIterator
       while (itr.hasNext) {
-        val time = c.getCurrentTime
+//        val time = c.getCurrentTime
         val r = itr.next()
-        val str = time + "\n" + r
+//        val str = time + "\n" + r
+        val str = r
         val messages = new ProducerRecord[String, String](topic, str)
         println(messages)
         producer.send(messages)
