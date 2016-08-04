@@ -19,7 +19,7 @@ object RecommandForMultiUsers extends BaseConf {
         """.stripMargin)
       System.exit(1)
     }
-    conf.setAppName("RecommandationAll")
+    conf.setAppName("RecommandationMulti")
     val sc = new SparkContext(conf)
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
     val hc = new org.apache.spark.sql.hive.HiveContext(sc)
