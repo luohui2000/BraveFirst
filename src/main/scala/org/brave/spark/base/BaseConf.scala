@@ -60,6 +60,6 @@ class BaseConf {
   val batchInterval: String = properties.getProperty("kafka.batch.interval")
 
   val conf = new SparkConf()
-  conf.setMaster(sparkMasterRemoteLocal2)
+  conf.setMaster(sparkMasterRemoteLocal)
   conf.set("spark.driver.memory", sparkDriverMemory)
 }

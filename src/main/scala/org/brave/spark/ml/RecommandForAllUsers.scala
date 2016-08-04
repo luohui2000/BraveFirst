@@ -15,7 +15,7 @@ object RecommandForAllUsers extends BaseConf {
         """.stripMargin)
       System.exit(1)
     }
-    conf.setAppName("Recommandation")
+    conf.setAppName("RecommandationAll")
     val sc = new SparkContext(conf)
     
     val modelpath = args(0)
@@ -33,7 +33,7 @@ object RecommandForAllUsers extends BaseConf {
             Tuple2(x._1,x._2(8)),
             Tuple2(x._1,x._2(9))
             )
-    }
+    }.repartition(20)
     recResultForAllUsers.first()
     recResultForAllUsers.saveAsTextFile("/data/txt/recResultForAllUsers0803")
     
