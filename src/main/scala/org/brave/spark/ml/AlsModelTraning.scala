@@ -92,7 +92,7 @@ object AlsModelTraning extends BaseConf {
     ).mean())*/
     model.transform(data).select("rating", "prediction").collect().foreach{x =>
 
-      println(x.getFloat(0) +"__"+ x.getDouble(1))
+      println(x.getFloat(0) +"__"+ x.getFloat(1).toDouble)
     }
     //val usersProducts = data.map(x => (x., x.product))
     //val pradictions = model.transform(usersProducts).map(x => ((x.user, x.product), x.rating))
