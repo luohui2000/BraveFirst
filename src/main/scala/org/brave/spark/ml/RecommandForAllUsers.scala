@@ -32,8 +32,12 @@ object RecommandForAllUsers extends BaseConf {
             Tuple2(x._1,x._2(7)),
             Tuple2(x._1,x._2(8)),
             Tuple2(x._1,x._2(9))
-            ).mkString
-    }.saveAsTextFile("/data/txt/recResultForAllUsers0803")
+            )
+    }
+    recResultForAllUsers.first()
+    recResultForAllUsers.saveAsTextFile("/data/txt/recResultForAllUsers0803")
+    
+    
     
 
   }
