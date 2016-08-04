@@ -24,12 +24,12 @@ object ETL extends BaseConf {
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
     val hc = new org.apache.spark.sql.hive.HiveContext(sc)
     import sqlContext.implicits._
-    val movies = sc.textFile("data/movies.txt").map(splitFunc).map(x => Movies(x(0).trim().toInt,
+    val movies = sc.textFile("data/movies.txt").map(_.split(",")).map(x => Movies(x(0).trim().toInt,
       x(1).trim(),
       x(2).trim())).toDF()
     movies.write.parquet("/data/movies")
     hc.sql("CREATE TABLE IF NOT EXISTS movies (movieId int, title string, genres string)  STORED AS PARQUET")
-    hc.sql("LOAD DATA INPATH 'hdfs://data/movies' OVERWRITE INTO TABLE movies")
+    hc.sql("LOAD DATA INPATH 'hdfs://master:9000/data/movies' OVERWRITE INTO TABLE movies")
     //    movies.write.saveAsTable("movies")
 
     val ratings = sc.textFile("data/ratings.txt").filter(!_.contains("(no genres listed)")).map(_.split(",")).map(x => Ratings(x(0).trim().toInt,
@@ -38,7 +38,7 @@ object ETL extends BaseConf {
       x(3).trim().toDouble)).toDF()
     ratings.write.parquet("/data/ratings")
     hc.sql("CREATE TABLE IF NOT EXISTS ratings (userId int, movieId int, rating float, timestamp double)  STORED AS PARQUET")
-    hc.sql("LOAD DATA INPATH 'hdfs://data/ratings' OVERWRITE INTO TABLE ratings")
+    hc.sql("LOAD DATA INPATH 'hdfs://master:9000/data/ratings' OVERWRITE INTO TABLE ratings")
     //    ratings.write.saveAsTable("ratings")
 
     val links = sc.textFile("data/links.txt").filter {
@@ -48,25 +48,28 @@ object ETL extends BaseConf {
       x(2).trim().toInt)).toDF()
     links.write.parquet("/data/links")
     hc.sql("CREATE TABLE IF NOT EXISTS links (movieId int, imdbId int, tmdbId int)  STORED AS PARQUET")
-    hc.sql("LOAD DATA INPATH 'hdfs://data/links' OVERWRITE INTO TABLE links")
+    hc.sql("LOAD DATA INPATH 'hdfs://master:9000/data/links' OVERWRITE INTO TABLE links")
     //    links.write.saveAsTable("links")
 
     val tags = sc.textFile("data/tags.txt").filter {
       !_.endsWith(",")
     }.filter {
       !_.toString().contains('\"')
-    }.map(splitFunc).map(x => Tags(x(0).trim().toInt,
+    }
+//    .map(splitFunc)
+    .map(_.split(","))
+    .map(x => Tags(x(0).trim().toInt,
       x(1).trim().toInt,
       x(2).trim(),
       x(3).trim().toDouble)).toDF()
     tags.write.parquet("/data/tags")
     hc.sql("CREATE TABLE IF NOT EXISTS tags (userId int, movieId int, tag string, timestamp double)  STORED AS PARQUET")
-    hc.sql("LOAD DATA INPATH 'hdfs://data/tags' OVERWRITE INTO TABLE tags")
+    hc.sql("LOAD DATA INPATH 'hdfs://master:9000/data/tags' OVERWRITE INTO TABLE tags")
     //    tags.write.saveAsTable("tags")
   }
 
+  //tags.txt里总共有3处包含\，我直接把\删掉了。相关命令：sed -i 's/\\//g' tags.txt
   def splitFunc: String => Array[String] = line => {
-
     if(line.contains("\"")){
       val arr = line.split("\"")
       Array(arr(0).substring(0,arr(0).length-1),arr(1),arr(2).substring(1,arr(2).length))

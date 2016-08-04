@@ -32,7 +32,6 @@ object RecommandForSingleUser extends BaseConf {
     import sqlContext.implicits._
     val recResult = model.recommendProducts(userid, 12).map{ x =>  userid.toString()+"|"+x.product.toString()+"|"+x.rating.toString()}
     val recRDD = sc.parallelize(recResult)
-    recRDD.collect.foreach(println)
     val recDF = recRDD.map ( _.split('|')).map(x=> Result(x(0).toInt,x(1).toInt,x(2).toDouble,last_upadte_time))
     val recDF2 = recDF.toDF()
     recDF2.first()
