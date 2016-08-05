@@ -27,10 +27,14 @@ Open data from movielens and yelp
 
 ##Architecture
 Data visualization: Apache Zeppelin
-Web System:Spring MVC or Play2
-Machine Learning Framework: Spark MLlib
-Data Warehouse and ETL:SparkSQL + Hive
-Data Storage: HDFS
-Streaming Data Flow:Kafka or Flume
 
+Web System:Spring MVC or Play2
+
+Machine Learning Framework: Spark MLlib
+
+Data Warehouse and ETL:SparkSQL + Hive
+
+Data Storage: HDFS
+
+Streaming Data Flow:Kafka or Flume
 

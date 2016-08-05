@@ -55,6 +55,7 @@ object RecommandForMultiUsers extends BaseConf {
       saveRecResultToMysql(userid, model, sc, sqlContext)
     }
   }
+  
   def saveRecResultToMysql(userid: Int, model: MatrixFactorizationModel, sc: SparkContext, sqlContext: SQLContext) {
     val c = new CalendarTool
     val last_upadte_time = c.getCurrentTime
