@@ -1,20 +1,12 @@
 package org.brave.spark.web.spider;
 
-import com.gentlesoft.commons.util.UtilFile;
-import org.brave.spark.web.bo.MoiveLinkBo;
-import org.brave.spark.web.dao.RecommandationDao;
+import org.brave.spark.web.bo.MovieLinkBo;
 import org.brave.spark.web.service.RecommandationService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -26,7 +18,7 @@ import java.net.URL;
  */
 @Service
 public class PictureSpider {
-
+    public static ThreadLocal threadLocal=new ThreadLocal();
     /**
      *
      *<div class="poster">
@@ -38,11 +30,11 @@ public class PictureSpider {
      *
      * 解析上面字符串中的src
      *
-     * @param moiveLinkBo
+     * @param movieLinkBo
      * @return
      */
-    public  void getImageUrlByMoive(MoiveLinkBo moiveLinkBo) {
-         this.getImageUrlByMoive(moiveLinkBo.getMoive_id(),moiveLinkBo.getImdb_id());
+    public  void getImageUrlBymovie(MovieLinkBo movieLinkBo) {
+         this.getImageUrlBymovie(movieLinkBo.getMovie_id(), movieLinkBo.getImdb_id());
     }
 
     /**
@@ -58,8 +50,8 @@ public class PictureSpider {
      *
      * @return
      */
-    public  void getImageUrlByMoive(String moive_id,String imdb_id) {
-        String moiveUrl="http://www.imdb.com/title/tt"+imdb_id;
+    public  void getImageUrlBymovie(String movie_id,String imdb_id) {
+        String movieUrl="http://www.imdb.com/title/tt"+imdb_id;
         long startTime=System.currentTimeMillis();
         HttpURLConnection urlConnection=null;
         BufferedReader reader=null;
@@ -67,7 +59,7 @@ public class PictureSpider {
         String line;
         int responsecode;
         try{
-            URL url = new URL(moiveUrl);
+            URL url = new URL(movieUrl);
             urlConnection = (HttpURLConnection)url.openConnection();
             urlConnection.setRequestProperty("User-Agent", "Mozilla/31.0 (compatible; MSIE 10.0; Windows NT; DigExt)"); //防止报403错误。
 
@@ -90,32 +82,36 @@ public class PictureSpider {
             String[] str2 = str1[1].split("itemprop");
             String[] str3 = str2[0].split("src");
             String imgUrl=str3[1].substring(2, str3[1].length() - 1);
-            System.out.println(moiveUrl);
+            System.out.println(movieUrl);
             System.out.println(imgUrl);
             System.out.println("爬取图片链接共耗时（秒）："+(System.currentTimeMillis()-startTime)/1000);
-            this.saveMoiveUrls(moive_id, moiveUrl, imgUrl);
-        }catch (IOException e){
+            this.savemovieUrls(movie_id, movieUrl, imgUrl);
+        }catch (Exception e){
             e.printStackTrace();
-            System.out.println("moiveUrl----"+moiveUrl+"------moiveUrl");
+            System.out.println("movieUrl----"+movieUrl+"------movieUrl");
+            System.out.println("movieId----"+movie_id+"------movie_id");
         }
     }
 
 
     /**
      *  将爬取的url存到数据库中
-     * @param moiveId
-     * @param moiveUrl
-     * @param moiveImgUrl
+     * @param movieId
+     * @param movieUrl
+     * @param movieImgUrl
      */
-    public  void saveMoiveUrls(String moiveId,String moiveUrl,String moiveImgUrl){
-        ApplicationContext context = new
-                ClassPathXmlApplicationContext("applicationContext.xml");
-        RecommandationService recommandationService = (RecommandationService)context.getBean("recommandationService");
-       recommandationService.saveMoiveUrls(moiveId,moiveUrl,moiveImgUrl);
-       recommandationService.updateMoiveLinkStateByMoiveId(moiveId);
+    public  void savemovieUrls(String movieId,String movieUrl,String movieImgUrl){
+        RecommandationService recommandationService = (RecommandationService)threadLocal.get();
+        if(recommandationService==null){
+            ApplicationContext context = new
+                    ClassPathXmlApplicationContext("applicationContext.xml");
+            recommandationService = (RecommandationService)context.getBean("recommandationService");
+        }
+       recommandationService.savemovieUrls(movieId, movieUrl, movieImgUrl);
+       recommandationService.updatemovieLinkStateBymovieId(movieId);
     }
 
     public static void main(String[] args) throws Exception {
-        new PictureSpider().getImageUrlByMoive("1", "114709");
+       // new PictureSpider().getImageUrlBymovie("1", "114709");
     }
 }

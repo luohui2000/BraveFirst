@@ -90,12 +90,11 @@
                 //var dataJson = $.parseJSON(dataJson);
                 $("#gallery").children("div").remove();
                 $.each(dataJson, function (index, item) {
-                    alertString += ("用户：【" + item.user_id + "】," + "电影名称" + (index + 1) + ":【" + item.moive_name) + "】\n";
-
+                    alertString += ("用户：【" + item.user_id + "】," + "电影名称" + (index + 1) + ":【" + item.movie_name) + "】\n";
                     var str = " <div class=' audio images item '>";
-                    str+="  <a target= _blank href='"+item.moive_url+"'  data-toggle='modal'>";
-                    str+="  <img src='"+item.moive_img_url+"' alt='"+item.moive_name+"'/> </a>";
-                    str+="  <p>"+item.moive_name+" </p></div>";
+                    str+="  <a target= _blank href='"+item.movie_url+"'  data-toggle='modal'>";
+                    str+="  <img src='"+item.movie_img_url+"' alt='"+item.movie_name+"'/> </a>";
+                    str+="  <p>"+item.movie_name+" </p></div>";
                     $("#gallery").prepend(str)
                 });
                // alert(alertString);

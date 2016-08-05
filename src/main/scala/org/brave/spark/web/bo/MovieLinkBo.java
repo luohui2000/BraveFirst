@@ -4,12 +4,12 @@ package org.brave.spark.web.bo;
  * Created by yuchen
  * on 2016/7/26 0026.
  */
-public class MoiveLinkBo {
+public class MovieLinkBo {
 
     /**
      * 电影ID
      */
-    private String moive_id;
+    private String movie_id;
     /**
      * imdb_id
      */
@@ -24,12 +24,12 @@ public class MoiveLinkBo {
     private String state;
 
 
-    public String getMoive_id() {
-        return moive_id;
+    public String getMovie_id() {
+        return movie_id;
     }
 
-    public void setMoive_id(String moive_id) {
-        this.moive_id = moive_id;
+    public void setMovie_id(String movie_id) {
+        this.movie_id = movie_id;
     }
 
     public String getImdb_id() {

@@ -1,6 +1,6 @@
 package org.brave.spark.web.dao;
 
-import org.brave.spark.web.bo.MoiveLinkBo;
+import org.brave.spark.web.bo.MovieLinkBo;
 import org.brave.spark.web.bo.RecommandationBo;
 import org.springframework.stereotype.Repository;
 
@@ -24,29 +24,37 @@ public interface RecommandationDao {
 
     /**
      *  将爬取的url存到数据库中
-     * @param moiveId
-     * @param moiveUrl
-     * @param moiveImgUrl
+     * @param movieId
+     * @param movieUrl
+     * @param movieImgUrl
      */
-    void saveMoiveUrls(String moiveId,String moiveUrl,String moiveImgUrl);
+    void savemovieUrls(String movieId,String movieUrl,String movieImgUrl);
 
     /**
      * 获取所有电影链接
      * @return List<OrderBo>
      */
-    public List<MoiveLinkBo> getMoiveLinks() ;
+    public List<MovieLinkBo> getmovieLinks() ;
 
     /**
-     * 通过MoiveId 获取link
+     * 通过movieId 获取link
      * @return List<OrderBo>
      */
-    public MoiveLinkBo getMoiveLinkByMoiveId(String moive_id) ;
+    public MovieLinkBo getmovieLinkBymovieId(String movie_id) ;
 
     /**
      * 更新电影链接的状态
-     * @param moiveId 电影Id
+     * @param movieId 电影Id
      */
-   public void updateMoiveLinkStateByMoiveId(String moiveId);
+   public void updatemovieLinkStateBymovieId(String movieId);
+
+    /**
+     * 将日期和数量日志写入
+     * @param day1
+     * @param num
+     */
+    void saveLogs(String day1,String num);
+
 }
 
 
