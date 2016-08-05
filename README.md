@@ -4,7 +4,7 @@ It is developed for IBM Spark competition.
 
 
 ## Schedule
->8月1日~8月10日的日程表  
+8月1日~8月10日的日程表  
 8月1日~8月3日 实时推荐模块的开发 罗辉，清扬  
 8月1日~8月3日 基于物品的推荐模块的开发 雄健，刘能  
 8月1日~8月3日 电影图片爬虫的开发，推荐结果写入MYSQL 余陈  
@@ -15,7 +15,6 @@ It is developed for IBM Spark competition.
 8月7日 完成作品视频的录制，上传优酷以及youtube 罗辉  
 8月8日 预提交第一版或者测试版作品 罗辉  
 8月9日~10日 提交第一版作品 罗辉  
-
 
 ##Use case 
 Recommandation.
@@ -37,4 +36,3 @@ Data Warehouse and ETL:SparkSQL + Hive
 Data Storage: HDFS
 
 Streaming Data Flow:Kafka or Flume
-

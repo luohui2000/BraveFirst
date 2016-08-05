@@ -30,7 +30,6 @@ object ETL extends BaseConf {
     movies.write.parquet("/data/movies")
     hc.sql("CREATE TABLE IF NOT EXISTS movies (movieId int, title string, genres string)  STORED AS PARQUET")
     hc.sql("LOAD DATA INPATH 'hdfs://master:9000/data/movies' OVERWRITE INTO TABLE movies")
-    //    movies.write.saveAsTable("movies")
 
     val ratings = sc.textFile("data/ratings.txt").filter(!_.contains("(no genres listed)")).map(_.split(",")).map(x => Ratings(x(0).trim().toInt,
       x(1).trim().toInt,
@@ -39,7 +38,6 @@ object ETL extends BaseConf {
     ratings.write.parquet("/data/ratings")
     hc.sql("CREATE TABLE IF NOT EXISTS ratings (userId int, movieId int, rating float, timestamp double)  STORED AS PARQUET")
     hc.sql("LOAD DATA INPATH 'hdfs://master:9000/data/ratings' OVERWRITE INTO TABLE ratings")
-    //    ratings.write.saveAsTable("ratings")
 
     val links = sc.textFile("data/links.txt").filter {
       !_.endsWith(",")
@@ -49,7 +47,6 @@ object ETL extends BaseConf {
     links.write.parquet("/data/links")
     hc.sql("CREATE TABLE IF NOT EXISTS links (movieId int, imdbId int, tmdbId int)  STORED AS PARQUET")
     hc.sql("LOAD DATA INPATH 'hdfs://master:9000/data/links' OVERWRITE INTO TABLE links")
-    //    links.write.saveAsTable("links")
 
     val tags = sc.textFile("data/tags.txt").filter {
       !_.endsWith(",")
@@ -65,10 +62,9 @@ object ETL extends BaseConf {
     tags.write.parquet("/data/tags")
     hc.sql("CREATE TABLE IF NOT EXISTS tags (userId int, movieId int, tag string, timestamp double)  STORED AS PARQUET")
     hc.sql("LOAD DATA INPATH 'hdfs://master:9000/data/tags' OVERWRITE INTO TABLE tags")
-    //    tags.write.saveAsTable("tags")
   }
 
-  //tags.txt里总共有3处包含\，我直接把\删掉了。相关命令：sed -i 's/\\//g' tags.txt
+  //tags.txt里总共有3处包含\，我直接把\删掉了。相关脚本：downloaddata.sh
   def splitFunc: String => Array[String] = line => {
     if(line.contains("\"")){
       val arr = line.split("\"")
@@ -76,6 +72,5 @@ object ETL extends BaseConf {
     } else {
       line.split(",")
     }
-
   }
 }

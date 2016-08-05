@@ -1,6 +1,7 @@
 package org.brave.spark.util.datacleaner
 
 import org.apache.spark._
+import org.apache.spark.sql._
 import org.brave.spark.base.BaseConf
 
 /**
@@ -47,8 +48,11 @@ object DataExtractor extends BaseConf {
     batchData.persist()
     streamingData.persist()
     val i1 = trainingData.intersect(batchData).count()
+    println(i1)
     val i2 = trainingData.intersect(streamingData).count()
+    println(i2)
     val i3 = streamingData.intersect(batchData).count()
+    println(i3)
     trainingData.unpersist()
     batchData.unpersist()
     streamingData.unpersist()*/
@@ -57,9 +61,9 @@ object DataExtractor extends BaseConf {
     hc.sql(s"drop table ${tableName}_training")
     hc.sql(s"drop table ${tableName}_batch")
     hc.sql(s"drop table ${tableName}_streaming")
-    trainingData.write.saveAsTable(s"${tableName}_training")
-    batchData.write.saveAsTable(s"${tableName}_batch")
-    streamingData.write.saveAsTable(s"${tableName}_streaming")
-    streamingData.write.json(s"/data/${tableName}_streaming")
+    trainingData.write.mode(SaveMode.Overwrite).saveAsTable(s"${tableName}_training")
+    batchData.write.mode(SaveMode.Overwrite).saveAsTable(s"${tableName}_batch")
+    streamingData.write.mode(SaveMode.Overwrite).saveAsTable(s"${tableName}_streaming")
+    streamingData.write.mode(SaveMode.Overwrite).json(s"/data/${tableName}_streaming")
   }
 }
