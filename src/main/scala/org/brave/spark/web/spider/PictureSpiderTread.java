@@ -1,6 +1,6 @@
 package org.brave.spark.web.spider;
 
-import org.brave.spark.web.bo.MoiveLinkBo;
+import org.brave.spark.web.bo.MovieLinkBo;
 import org.brave.spark.web.service.RecommandationService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -16,24 +16,26 @@ import java.util.List;
  */
 public class PictureSpiderTread extends Thread{
     PictureSpider pictureSpider= new PictureSpider();
+
     @Override
     public void run() {
+        ApplicationContext context = new
+                ClassPathXmlApplicationContext("applicationContext.xml");
+        RecommandationService recommandationService = (RecommandationService)context.getBean("recommandationService");
+        PictureSpider.threadLocal.set(recommandationService);
         while (true) {
             try {
-            ApplicationContext context = new
-                    ClassPathXmlApplicationContext("applicationContext.xml");
-            RecommandationService recommandationService = (RecommandationService)context.getBean("recommandationService");
-            List<MoiveLinkBo> moiveLinkBos = recommandationService.getMoiveLinks();
-            if(!moiveLinkBos.isEmpty()){
-                for(MoiveLinkBo moiveLinkBo:moiveLinkBos){
+            List<MovieLinkBo> MovieLinkBos = recommandationService.getmovieLinks();
+            if(!MovieLinkBos.isEmpty()){
+                for(MovieLinkBo movieLinkBo:MovieLinkBos){
                     if(pictureSpider==null){
                         pictureSpider= new PictureSpider();
                     }
-                    pictureSpider.getImageUrlByMoive(moiveLinkBo);
+                    pictureSpider.getImageUrlBymovie(movieLinkBo);
                     Thread.sleep(1000);
                     }
                 }else{
-                Thread.sleep(1000000000);
+                Thread.sleep(10000);
             }
             } catch (InterruptedException e) {
                 e.printStackTrace();

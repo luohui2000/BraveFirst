@@ -17,12 +17,11 @@ object RunHelloWorldOnLocalServer extends BaseConf {
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
 //    val df = sc.textFile("hdfs://master:9000/logs/demo.json")
     val df = sqlContext.read.json(demoFilePathLocal)
-    df.show()
-    df.printSchema();
-   df.registerTempTable("demo")
+    //df.show()
+   // df.printSchema();
+   df.registerTempTable("shop3")
    var peopleName = sqlContext.sql(
-     "select  qq,count(qq)  from demo  " +
-     "group by qq having(count(qq)>2)  ")
+     "select count(*) as day1  from shop3 where (shop3.visitTime/1000) >= 1467302400 and (shop3.visitTime/1000) <= 1467388800")
     peopleName.collect().foreach(println)
 
 

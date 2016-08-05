@@ -5,24 +5,24 @@
 
     <select id="getRecommandationMoviesByUserId"  resultType="org.brave.spark.web.bo.RecommandationBo">
        select
-       umr.user_id,
-       umr.moive_id,
-       m.moive_name as moive_name,
-       mu.img_url as moive_img_url,
-       mu.moive_url as moive_url
+       umr.user_id as user_id,
+       umr.movie_id as movie_id ,
+       m.movie_name as movie_name,
+       mu.img_url as movie_img_url,
+       mu.movie_url as movie_url
         FROM
-        user_moive_recommandation umr
-        left join moive_url mu on umr.moive_id=mu.moive_id
-        left join moive m on umr.moive_id=m.moive_id
+        user_movie_recommandation umr
+        left join movie_url mu on umr.movie_id=mu.movie_id
+        left join movie m on umr.movie_id=m.movie_id
         WHERE
         umr.user_id =  #{param1}
     </select>
 
 
-    <insert id="saveMoiveUrls">
-        INSERT INTO moive_url (
-        moive_id,
-        moive_url,
+    <insert id="savemovieUrls">
+        INSERT INTO movie_url (
+        movie_id,
+        movie_url,
          img_url
         )
         VALUES (
@@ -33,30 +33,42 @@
     </insert>
 
 
-    <select id="getMoiveLinks"  resultType="org.brave.spark.web.bo.MoiveLinkBo">
+    <select id="getmovieLinks"  resultType="org.brave.spark.web.bo.MovieLinkBo">
         SELECT
         *
         FROM
-        moive_links
+        movie_links
         WHERE
-        state is null limit 200;
+        state is null and movie_id>5000 limit 1000;
     </select>
 
-    <update id="updateMoiveLinkStateByMoiveId" >
-        update moive_links
+    <update id="updatemovieLinkStateBymovieId" >
+        update movie_links
         set state='1'
-        where moive_id=#{param1};
+        where movie_id=#{param1};
     </update>
 
 
-    <select id="getMoiveLinkByMoiveId"  resultType="org.brave.spark.web.bo.MoiveLinkBo">
+    <select id="getmovieLinkBymovieId"  resultType="org.brave.spark.web.bo.MovieLinkBo">
         SELECT
         *
         FROM
-        moive_links
+        movie_links
         WHERE
-        moive_id =#{param1};
+        movie_id =#{param1};
     </select>
 
+
+
+    <insert id="saveLogs">
+        INSERT INTO logs (
+        day,
+        num
+        )
+        VALUES (
+        #{param1},
+        #{param2}
+        );
+    </insert>
 
 </mapper>

@@ -17,7 +17,8 @@ object TuiJianDemo extends BaseConf {
     conf.setAppName("TuiJianDemo")
    // conf.setMaster(sparkMasterRemoteLocal)
     val sc = new SparkContext(conf)
-    val ratings = sc.textFile("data/ratings.txt").map(_.split(",")).map(x => org.apache.spark.mllib.recommendation.Rating(x(0).trim().toInt,
+    val ratings = sc.textFile("data/ratings.txt").map(_.split(",")).map(x => org.apache.spark.mllib.recommendation.Rating(
+      x(0).trim().toInt,
       x(1).trim().toInt,
       x(2).trim().toFloat))
     val model=ALS.train(ratings,50,10,0.01)
@@ -25,5 +26,8 @@ object TuiJianDemo extends BaseConf {
     val k=5
     val topString=model.recommendProducts(userId,k)
     println(topString.mkString("\n"))
+
+
+
   }
 }
