@@ -21,8 +21,8 @@ object DataExtractor extends BaseConf {
     val trainingDataPercent = 0.8
     val batchDataPercent = 0.1
     val streamingDataPercent = 0.1
-    val tableName = "ratings"
-    val orderbyField = "timestamp"
+    val tableName = args(3)
+    val orderbyField = args(4)
 /*    val trainingDataPercent = args(0).toDouble
     val batchDataPercent = args(1).toDouble
     val streamingDataPercent = args(2).toDouble
@@ -58,9 +58,9 @@ object DataExtractor extends BaseConf {
     streamingData.unpersist()*/
     
     //保存成新表
-    hc.sql(s"drop table ${tableName}_training")
-    hc.sql(s"drop table ${tableName}_batch")
-    hc.sql(s"drop table ${tableName}_streaming")
+//    hc.sql(s"drop table ${tableName}_training")
+//    hc.sql(s"drop table ${tableName}_batch")
+//    hc.sql(s"drop table ${tableName}_streaming")
     trainingData.write.mode(SaveMode.Overwrite).saveAsTable(s"${tableName}_training")
     batchData.write.mode(SaveMode.Overwrite).saveAsTable(s"${tableName}_batch")
     streamingData.write.mode(SaveMode.Overwrite).saveAsTable(s"${tableName}_streaming")
