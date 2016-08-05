@@ -11,7 +11,6 @@ import org.apache.spark.sql.Row
 
 //本类专门用来训练模型，并将训练好的模型保存到本地或者HDFS上，供推荐环节调用
 object AlsModelTraning extends BaseConf {
-
   def main(args: Array[String]): Unit = {
     val filepath = "data/"
     conf.setAppName("Collaborative Filtering ")

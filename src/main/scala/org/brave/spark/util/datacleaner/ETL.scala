@@ -1,6 +1,7 @@
 package org.brave.spark.util.datacleaner
 
 import org.apache.spark._
+import org.apache.spark.sql._
 import org.brave.spark.base.BaseConf
 import org.brave.spark.caseclass.{ Links, Movies, Ratings, Tags }
 
@@ -18,7 +19,6 @@ import org.brave.spark.caseclass.{ Links, Movies, Ratings, Tags }
 object ETL extends BaseConf {
   def main(args: Array[String]) {
     var filepath = "data"
-    conf.setMaster(sparkMasterRemote)
     conf.setAppName("ETL for files from " + filepath)
     val sc = new SparkContext(conf)
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
@@ -29,15 +29,16 @@ object ETL extends BaseConf {
       x(2).trim())).toDF()
     movies.write.parquet("/data/movies")
     hc.sql("CREATE TABLE IF NOT EXISTS movies (movieId int, title string, genres string)  STORED AS PARQUET")
-    hc.sql("LOAD DATA INPATH 'hdfs://master:9000/data/movies' OVERWRITE INTO TABLE movies")
+    hc.sql("LOAD DATA INPATH '/data/movies' OVERWRITE INTO TABLE movies")
 
-    val ratings = sc.textFile("data/ratings.txt").filter(!_.contains("(no genres listed)")).map(_.split(",")).map(x => Ratings(x(0).trim().toInt,
-      x(1).trim().toInt,
-      x(2).trim().toFloat,
-      x(3).trim().toDouble)).toDF()
+    val ratings = sc.textFile("data/ratings.txt").filter(!_.contains("(no genres listed)")).
+      map(_.split(",")).map(x => Ratings(x(0).trim().toInt,
+                                          x(1).trim().toInt,
+                                          x(2).trim().toFloat,
+                                          x(3).trim().toInt)).toDF()
     ratings.write.parquet("/data/ratings")
-    hc.sql("CREATE TABLE IF NOT EXISTS ratings (userId int, movieId int, rating float, timestamp double)  STORED AS PARQUET")
-    hc.sql("LOAD DATA INPATH 'hdfs://master:9000/data/ratings' OVERWRITE INTO TABLE ratings")
+    hc.sql("CREATE TABLE IF NOT EXISTS ratings (userId int, movieId int, rating float, timestamp int)  STORED AS PARQUET")
+    hc.sql("LOAD DATA INPATH '/data/ratings' OVERWRITE INTO TABLE ratings")
 
     val links = sc.textFile("data/links.txt").filter {
       !_.endsWith(",")
@@ -46,31 +47,20 @@ object ETL extends BaseConf {
       x(2).trim().toInt)).toDF()
     links.write.parquet("/data/links")
     hc.sql("CREATE TABLE IF NOT EXISTS links (movieId int, imdbId int, tmdbId int)  STORED AS PARQUET")
-    hc.sql("LOAD DATA INPATH 'hdfs://master:9000/data/links' OVERWRITE INTO TABLE links")
+    hc.sql("LOAD DATA INPATH '/data/links' OVERWRITE INTO TABLE links")
 
     val tags = sc.textFile("data/tags.txt").filter {
       !_.endsWith(",")
     }.filter {
       !_.toString().contains('\"')
     }
-//    .map(splitFunc)
-    .map(_.split(","))
-    .map(x => Tags(x(0).trim().toInt,
-      x(1).trim().toInt,
-      x(2).trim(),
-      x(3).trim().toDouble)).toDF()
+      .map(_.split(","))
+      .map(x => Tags(x(0).trim().toInt,
+        x(1).trim().toInt,
+        x(2).trim(),
+        x(3).trim().toDouble)).toDF()
     tags.write.parquet("/data/tags")
     hc.sql("CREATE TABLE IF NOT EXISTS tags (userId int, movieId int, tag string, timestamp double)  STORED AS PARQUET")
-    hc.sql("LOAD DATA INPATH 'hdfs://master:9000/data/tags' OVERWRITE INTO TABLE tags")
-  }
-
-  //tags.txt里总共有3处包含\，我直接把\删掉了。相关脚本：downloaddata.sh
-  def splitFunc: String => Array[String] = line => {
-    if(line.contains("\"")){
-      val arr = line.split("\"")
-      Array(arr(0).substring(0,arr(0).length-1),arr(1),arr(2).substring(1,arr(2).length))
-    } else {
-      line.split(",")
-    }
+    hc.sql("LOAD DATA INPATH '/data/tags' OVERWRITE INTO TABLE tags")
   }
 }
