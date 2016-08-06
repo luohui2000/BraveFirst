@@ -16,7 +16,7 @@ Web System:Spring MVC
 
 Spider Module:
 
-RMDBS:MYSQL
+RDBMS:MYSQL
 
 Machine Learning Framework: Spark MLlib
 
