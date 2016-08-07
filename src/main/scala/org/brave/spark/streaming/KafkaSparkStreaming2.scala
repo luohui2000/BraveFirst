@@ -3,13 +3,15 @@ package org.brave.spark.streaming
 import java.util.Properties
 
 import kafka.serializer.StringDecoder
-import org.apache.spark.SparkConf
-import org.apache.spark.sql.{ Row, SQLContext }
+import org.apache.spark.{SparkContext, SparkConf}
+import org.apache.spark.sql.{SaveMode, Row, SQLContext}
 import org.apache.spark.sql.types.{ DoubleType, IntegerType, StructField, StructType, StringType }
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming._
 import org.apache.spark.streaming.kafka._
 import org.apache.spark.mllib.recommendation.{ MatrixFactorizationModel, Rating }
+import org.brave.spark.caseclass.Result
+import org.brave.util.util.CalendarTool
 import org.json.JSONObject
 
 import org.brave.spark.base.BaseConf
@@ -61,15 +63,24 @@ object KafkaSparkStreaming2 extends BaseConf {
       val useridRDD = recDF.select("userid").map(_.mkString)
       val useridItr = useridRDD.toLocalIterator
       var tmpuserid = ""
+      val c = new CalendarTool
       while (useridItr.hasNext) {
         tmpuserid = useridItr.next()
         println("the user id is:" + tmpuserid)
-        val result = ALSModel.recommendProducts(tmpuserid.trim.toInt, 10)
-        println("The recommanded Movies for user " + tmpuserid + " are:\n")
-        for(i <- 0 to 9){
-          println("MovieID:" +  result(i).product + "|Rating:" + result(i).rating)
-        }
-        
+        val last_upadte_time = c.getCurrentTime
+        val result = ALSModel.recommendProducts(tmpuserid.trim.toInt, 12).map { x => tmpuserid + "|" + x.product.toString + "|" + x.rating.toString }
+        val recRDD = useridRDD.sparkContext.parallelize(result)
+        import sqlContext.implicits._
+        val recDF = recRDD.map(_.split('|')).map(x => Result(x(0).toInt, x(1).toInt, x(2).toDouble, last_upadte_time))
+        val recDF2 = recDF.toDF()
+        val prop = new Properties
+        prop.put("driver", "com.mysql.jdbc.Driver")
+        recDF2.write.mode(SaveMode.Append).jdbc("jdbc:mysql://master:3306/hive_db?user=root&password=Spark@123", "hive_db.user_movie_recommandation", prop)
+//        println("The recommanded Movies for user " + tmpuserid + " are:\n")
+//        for(i <- 0 to 9){
+//          println("MovieID:" +  result(i).product + "|Rating:" + result(i).rating)
+//        }
+
       }
 
       //实时为用户推荐10部电影,存在在map中又调用了transformation的问题。
@@ -105,4 +116,5 @@ object KafkaSparkStreaming2 extends BaseConf {
     val jsonob = new JSONObject(json)
     jsonob.getInt("userid")
   }
+
 }
