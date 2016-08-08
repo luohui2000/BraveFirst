@@ -6,7 +6,11 @@ It is developed for IBM Spark competition.
 ##Github Link(currently a private project)
 https://github.com/luohui2000/BraveFirst
 ##Product Video Link
-TBD
+https://youtu.be/EkQMLIUv3tQ
+http://v.youku.com/v_show/id_XMTY3NjI3MzEwOA==.html
+##Demo Video Link
+https://youtu.be/cniD_S20aX0
+http://v.youku.com/v_show/id_XMTY3NjI3MzEwOA==.html
 ##Product Requirement
 To command suitable movies for movie watchers. Due to we are using the data of MovieLens, we are developing aim to provide more suitable movies via our system.
 ##Archtecture
