@@ -18,7 +18,7 @@ Data visualization: JavaScript
 
 Web System:Spring MVC
 
-Spider Module:
+Spider Module:Java Program
 
 RDBMS:MYSQL
 
