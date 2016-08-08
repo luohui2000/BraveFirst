@@ -13,15 +13,17 @@ import org.brave.spark.caseclass._
 
 object RecommandForSingleUser extends BaseConf {
   def main(args: Array[String]) {
-    if (args.length < 2) {
+    if (args.length < 4) {
       System.err.print(s"""
-                          |Usage: RecommandForAllUsers <ModelPath> <UserID>
+                          |Usage: RecommandForAllUsers <ModelPath> <UserID> <username> <password>
         """.stripMargin)
       System.exit(1)
     }
     conf.setAppName("RecommandationOne")
     val sc = new SparkContext(conf)
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+    val user = args(2)
+    val password = args(3)
     
     val c = new CalendarTool
     val last_upadte_time = c.getCurrentTime
@@ -38,9 +40,9 @@ object RecommandForSingleUser extends BaseConf {
     recDF2.printSchema()
     
     val prop = new Properties
-//    prop.put("username", "root")
-//    prop.put("password", "Spark@123")
+    prop.put("username", user)
+    prop.put("password", password)
     prop.put("driver", "com.mysql.jdbc.Driver")
-    recDF2.write.mode(SaveMode.Append).jdbc("jdbc:mysql://master:3306/hive_db?user=root&password=Spark@123", "hive_db.user_movie_recommandation", prop)
+    recDF2.write.mode(SaveMode.Append).jdbc("jdbc:mysql://master:3306/hive_db", "hive_db.user_movie_recommandation", prop)
   }
 }

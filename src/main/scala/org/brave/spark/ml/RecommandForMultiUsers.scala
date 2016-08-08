@@ -13,9 +13,9 @@ import org.brave.spark.caseclass._
 
 object RecommandForMultiUsers extends BaseConf {
   def main(args: Array[String]) {
-    if (args.length < 2) {
+    if (args.length < 4) {
       System.err.print(s"""
-                          |Usage: RecommandForMultiUsers <ModelPath> <SubsetUserCount>
+                          |Usage: RecommandForMultiUsers <ModelPath> <SubsetUserCount> <username> <password>
         """.stripMargin)
       System.exit(1)
     }
@@ -25,6 +25,8 @@ object RecommandForMultiUsers extends BaseConf {
     val hc = new org.apache.spark.sql.hive.HiveContext(sc)
     val modelpath = args(0)
     val someUsers = args(1).toInt
+    val user = args(2)
+    val password = args(3)
 
     //通过recommendProductsForUsers方法来跑，集群无法成功运行起来
     /*    val modelpath = args(0)
@@ -52,11 +54,11 @@ object RecommandForMultiUsers extends BaseConf {
 
     while (itr.hasNext) {
       val userid = itr.next()
-      saveRecResultToMysql(userid, model, sc, sqlContext)
+      saveRecResultToMysql(userid, model, sc, sqlContext,user,password)
     }
   }
   
-  def saveRecResultToMysql(userid: Int, model: MatrixFactorizationModel, sc: SparkContext, sqlContext: SQLContext) {
+  def saveRecResultToMysql(userid: Int, model: MatrixFactorizationModel, sc: SparkContext, sqlContext: SQLContext,user:String,password:String) {
     val c = new CalendarTool
     val last_upadte_time = c.getCurrentTime
     val recResult = model.recommendProducts(userid, 12).map { x => userid.toString() + "|" + x.product.toString() + "|" + x.rating.toString() }
@@ -66,6 +68,8 @@ object RecommandForMultiUsers extends BaseConf {
     val recDF2 = recDF.toDF()
     val prop = new Properties
     prop.put("driver", "com.mysql.jdbc.Driver")
-    recDF2.write.mode(SaveMode.Append).jdbc("jdbc:mysql://master:3306/hive_db?user=root&password=Spark@123", "hive_db.user_movie_recommandation", prop)
+    prop.put("user", user)
+    prop.put("password", password)
+    recDF2.write.mode(SaveMode.Append).jdbc("jdbc:mysql://master:3306/hive_db", "hive_db.user_movie_recommandation", prop)
   }
 }

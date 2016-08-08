@@ -3,8 +3,8 @@ package org.brave.spark.streaming
 import java.util.Properties
 
 import kafka.serializer.StringDecoder
-import org.apache.spark.{SparkContext, SparkConf}
-import org.apache.spark.sql.{SaveMode, Row, SQLContext}
+import org.apache.spark.{ SparkContext, SparkConf }
+import org.apache.spark.sql.{ SaveMode, Row, SQLContext }
 import org.apache.spark.sql.types.{ DoubleType, IntegerType, StructField, StructType, StringType }
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming._
@@ -22,9 +22,9 @@ import org.brave.spark.base.BaseConf
 object KafkaSparkStreaming2 extends BaseConf {
 
   def main(args: Array[String]) {
-    if (args.length < 4) {
+    if (args.length < 6) {
       System.err.print(s"""
-                          |Usage: KafkaSparkStreaming <zkQuorum> <group> <topics> <numThreads>
+                          |Usage: KafkaSparkStreaming <zkQuorum> <group> <topics> <numThreads> <username> <password>
         """.stripMargin)
       System.exit(1)
     }
@@ -34,6 +34,8 @@ object KafkaSparkStreaming2 extends BaseConf {
     println("group:" + group)
     println("topics:" + topics)
     println("numThreads:" + numThreads)
+    val user = args(4)
+    val password = args(5)
     conf.setAppName("KafkaStreaming")
     val storageLevel = StorageLevel.DISK_ONLY
     val ssc = new StreamingContext(conf, Seconds(batchInterval.toInt / 1000))
@@ -41,10 +43,10 @@ object KafkaSparkStreaming2 extends BaseConf {
     ssc.checkpoint(checkpointDirectory)
     val topicMap = topics.split(",").map((_, numThreads.toInt)).toMap
     val kafkaStream = KafkaUtils.createStream(ssc, zkQuorum, group, topicMap, storageLevel)
-      val schema = new StructType(
-        Array(StructField("userid",IntegerType,true),
-        StructField("productid",IntegerType,true),
-        StructField("rating",DoubleType,true)))
+    val schema = new StructType(
+      Array(StructField("userid", IntegerType, true),
+        StructField("productid", IntegerType, true),
+        StructField("rating", DoubleType, true)))
 
     kafkaStream.foreachRDD { rdd =>
       val sqlContext = SQLContext.getOrCreate(rdd.sparkContext)
@@ -75,11 +77,13 @@ object KafkaSparkStreaming2 extends BaseConf {
         val recDF2 = recDF.toDF()
         val prop = new Properties
         prop.put("driver", "com.mysql.jdbc.Driver")
-        recDF2.write.mode(SaveMode.Append).jdbc("jdbc:mysql://master:3306/hive_db?user=root&password=Spark@123", "hive_db.user_movie_recommandation", prop)
-//        println("The recommanded Movies for user " + tmpuserid + " are:\n")
-//        for(i <- 0 to 9){
-//          println("MovieID:" +  result(i).product + "|Rating:" + result(i).rating)
-//        }
+        prop.put("user", user)
+        prop.put("password", password)
+        recDF2.write.mode(SaveMode.Append).jdbc("jdbc:mysql://master:3306/hive_db", "hive_db.user_movie_recommandation", prop)
+        //        println("The recommanded Movies for user " + tmpuserid + " are:\n")
+        //        for(i <- 0 to 9){
+        //          println("MovieID:" +  result(i).product + "|Rating:" + result(i).rating)
+        //        }
 
       }
 

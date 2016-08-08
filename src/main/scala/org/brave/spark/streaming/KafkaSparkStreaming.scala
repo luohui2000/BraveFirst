@@ -90,7 +90,7 @@ object KafkaSparkStreaming {
         StructField("productid",IntegerType,true),
         StructField("rating",DoubleType,true)))
 
-      sqlContext.createDataFrame(ratingRdd,schema).write.jdbc("mysql-url","table",dbProperties("user","pass"))
+      sqlContext.createDataFrame(ratingRdd,schema).write.jdbc("mysql-url","table",dbProperties("user","password"))
 
 //      rdd.saveAsTextFile("/data/movieStream")
 

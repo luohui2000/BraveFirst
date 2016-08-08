@@ -23,7 +23,7 @@ public class MySqlJdbcReader extends BaseConf{
         conf.setJars(new String[]{"mysql-connector-java-5.1.31.jar"});
         SparkContext sc = new SparkContext(conf);
         SQLContext sqlContext = new SQLContext(sc);
-        String url = "jdbc:mysql://192.168.90.51:3306/apitest?user=honghailt&password=honghailt";
+        String url = "jdbc:mysql://192.168.90.51:3306/apitest";
         DataFrame df = sqlContext
                 .read()
                 .format("jdbc")
