@@ -42,7 +42,6 @@ object ALSRec extends BaseConf {
       println("RMSE = " + rmse(R, ms, us))
       println()
     }
-
   }
   def generateR(): RealMatrix = {
     val mh = randomMatrix(M, F) //产生一个随机矩阵X，这是个稠密矩阵

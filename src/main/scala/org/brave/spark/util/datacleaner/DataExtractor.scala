@@ -17,16 +17,16 @@ object DataExtractor {
         """.stripMargin)
       System.exit(1)
     }
-    val trainingDataPercent = 0.8
-    val batchDataPercent = 0.1
-    val streamingDataPercent = 0.1
+    val trainingDataPercent = args(0).toFloat
+    val batchDataPercent = args(1).toFloat
+    val streamingDataPercent = args(2).toFloat
     val tableName = args(3)
     val orderbyField = args(4)
-    /*    val trainingDataPercent = args(0).toDouble
-    val batchDataPercent = args(1).toDouble
-    val streamingDataPercent = args(2).toDouble
-    val tableName = args(3)
-    val orderbyField = args(4)*/
+    /*    val trainingDataPercent = 0.8
+    val batchDataPercent = 0.1
+    val streamingDataPercent = 0.1
+    val tableName = "ratings"
+    val orderbyField = "timestamp"*/
     val conf = new SparkConf()
     conf.setAppName(s"Extract Data from table $tableName")
     val sc = new SparkContext(conf)
@@ -39,9 +39,30 @@ object DataExtractor {
     val trainingDataCount = dataCount.collect().apply(0).getLong(0).*(trainingDataPercent).toInt
     val batchDataCount = dataCount.collect().apply(0).getLong(0).*(batchDataPercent).toInt
     val streamingDataCount = dataCount.collect().apply(0).getLong(0).*(streamingDataPercent).toInt
-    val trainingData = hc.sql(s"select * from $tableName order by $orderbyField desc limit $streamingDataCount")
-    val batchData = hc.sql(s"select * from $tableName order by $orderbyField asc limit $batchDataCount")
-    val streamingData = dataTable.except(trainingData).except(batchData)
+    val orderByDFAsc = hc.sql(s"select * from $tableName order by $orderbyField asc")
+    val orderByDFDesc = hc.sql(s"select * from $tableName order by $orderbyField desc")
+    orderByDFDesc.write.mode(SaveMode.Overwrite).saveAsTable(s"${tableName}_${orderbyField}_asc")
+    orderByDFDesc.write.mode(SaveMode.Overwrite).saveAsTable(s"${tableName}_${orderbyField}_desc")
+
+    /*    val trainingData = hc.sql(s"select * from ${tableName}_${orderbyField} limit $trainingDataCount")
+    trainingData.count()
+    trainingData.registerTempTable("trainingData")
+    val maxTrainingTimestamp = hc.sql(s"select max($orderbyField) from trainingData").first().getInt(0)
+    println(maxTrainingTimestamp)
+    val batchData = hc.sql(s"select * from ${tableName}_${orderbyField} where $orderbyField > $maxTrainingTimestamp limit $batchDataCount")
+    batchData.count()
+    batchData.registerTempTable("batchData")
+    val maxBatchDataTimestamp = hc.sql(s"select max($orderbyField) from batchData").first().getInt(0)
+    println(maxBatchDataTimestamp)
+    val streamingData = hc.sql(s"select * from ${tableName}_${orderbyField} where $orderbyField > $maxBatchDataTimestamp")
+    streamingData.count()*/
+    val trainingData = hc.sql(s"select * from ${tableName}_${orderbyField}_asc limit $trainingDataCount")
+    val validationData = dataTable.except(trainingData)
+    validationData.registerTempTable("validationData")
+    val streamingData = hc.sql(s"select * from ${tableName}_${orderbyField}_desc limit $streamingDataCount")
+    streamingData.registerTempTable("streamingData")
+    val min = hc.sql(s"select min(${orderbyField}) from streamingData").first().getInt(0)
+    val batchData = hc.sql(s"select * from validationData where ${orderbyField}< $min")
 
     //验证3个数据集的切分是否正确，看他们的数据是否有交集,0就是对的。这个步骤会很慢
     /*    trainingData.persist()
@@ -58,24 +79,11 @@ object DataExtractor {
     streamingData.unpersist()*/
 
     //保存成新表
-    hc.sql(s"drop table ${tableName}_training")
-    hc.sql(s"drop table ${tableName}_batch")
-    hc.sql(s"drop table ${tableName}_streaming")
-    
-    trainingData.write.parquet("/data/trainingData")
-    batchData.write.parquet("/data/batchData")
-    streamingData.write.parquet("/data/streamingData")
-    
-    hc.sql(s"CREATE TABLE IF NOT EXISTS ${tableName}_training (userId int, movieId int, rating float, timestamp int)  STORED AS PARQUET")
-    hc.sql(s"CREATE TABLE IF NOT EXISTS ${tableName}_batch (userId int, movieId int, rating float, timestamp int)  STORED AS PARQUET")
-    hc.sql(s"CREATE TABLE IF NOT EXISTS ${tableName}_streaming (userId int, movieId int, rating float, timestamp int)  STORED AS PARQUET")
-    
-    hc.sql(s"LOAD DATA INPATH '/data/trainingData' OVERWRITE INTO TABLE ${tableName}_training")
-    hc.sql(s"LOAD DATA INPATH '/data/trainingData' OVERWRITE INTO TABLE ${tableName}_training")
-    hc.sql(s"LOAD DATA INPATH '/data/trainingData' OVERWRITE INTO TABLE ${tableName}_training")
-/*    trainingData.write.mode(SaveMode.Overwrite).saveAsTable(s"${tableName}_training")
+    trainingData.write.mode(SaveMode.Overwrite).saveAsTable(s"${tableName}_training")
     batchData.write.mode(SaveMode.Overwrite).saveAsTable(s"${tableName}_batch")
-    streamingData.write.mode(SaveMode.Overwrite).saveAsTable(s"${tableName}_streaming")*/
+    streamingData.write.mode(SaveMode.Overwrite).saveAsTable(s"${tableName}_streaming")
+
+    println("============Save Streaming Data as JSON============")
     streamingData.write.mode(SaveMode.Overwrite).json(s"/data/${tableName}_streaming")
   }
 }
