@@ -75,7 +75,6 @@ object Recommandation extends BaseConf {
 //   randomRecommandMovies.foreach { println }
     val randomRecommandMovieIDs = randomRecommandMovies.map(_.concat(",")).mkString
     hc.sql(s"select title from movies where movieId in (${randomRecommandMovieIDs.substring(0, randomRecommandMovieIDs.length - 1)})").collect().foreach(println)*/
-
     hc.sql("uncache table ratings")
     hc.sql("uncache table movies")
 
