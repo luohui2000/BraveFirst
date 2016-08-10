@@ -1,17 +1,22 @@
 package org.brave.spark.util.datacleaner
 
+import org.apache.log4j.{Logger, Level}
 import org.apache.spark.SparkContext
 import org.apache.spark.ml.{PipelineModel, Pipeline}
 import org.apache.spark.ml.recommendation.ALS.Rating
 import org.apache.spark.ml.recommendation.ALS
 import org.apache.spark.sql.DataFrame
 import org.brave.spark.base.BaseConf
-import org.apache.spark.sql.Row
 
 
 //本类专门用来训练模型，并将训练好的模型保存到本地或者HDFS上，供推荐环节调用
 object AlsModelTraning extends BaseConf {
+
   def main(args: Array[String]): Unit = {
+
+    Logger.getLogger("org.apache.spark").setLevel(Level.WARN)
+    Logger.getLogger("org.eclipse.jetty.server").setLevel(Level.OFF)
+
     val filepath = "data/"
     conf.setAppName("Collaborative Filtering ")
     val sc = new SparkContext(conf)
@@ -49,35 +54,36 @@ object AlsModelTraning extends BaseConf {
     var bestModel: PipelineModel = null
     var bestValidateRmse = Double.MaxValue
     var bestRank = 0
-    var bestLambda = -1.0
+//    var bestLambda = -1.0
     var bestIter = -1
 
-    //for (rank <- ranks; lam <- lambdas; iter <- iters) {
-      val als = new ALS().setRank(1).setMaxIter(1).setRegParam(0.01)
+    for (rank <- ranks; iter <- iters) {
+      val als = new ALS().setRank(rank).setMaxIter(iter).setRegParam(0.01)
       val pipeline = new Pipeline().setStages(Array(als))
       val model = pipeline.fit(traning)
       val validateRmse = computeRmse(model, validate) //使用训练出来的模型计算验证数据集得出rmse值
 
-      /*if (validateRmse < bestValidateRmse) {
+      if (validateRmse < bestValidateRmse) {
         //筛选出最小rmse值对应的模型和参数
         bestModel = model
+        println("validateRmse: " + validateRmse + " bestValidateRmse: " + bestValidateRmse)
         bestValidateRmse = validateRmse
         bestRank = rank
-        bestLambda = lam
         bestIter = iter
-      }*/
-    //}
+      }
+    }
 
     //使用模型对测试数据集进行预测，并计算出rmse值
-    /*val testDataRmse = computeRmse(bestModel, test)
+   /* val testDataRmse = computeRmse(bestModel, test)
     println(
       "the best model was trained with rank :" + bestRank +
-      "  lambda :" + bestLambda +
+//      "  lambda :" + bestLambda +
       "  numIter :" + bestIter +
       "  Rmse :" + testDataRmse
+
     )*/
 
-    //bestModel.write.overwrite().save(filepath + "alsModel")
+    bestModel.write.overwrite().save(filepath + "alsModel")
   }
 
   /**
@@ -85,18 +91,11 @@ object AlsModelTraning extends BaseConf {
     * 真值只能用最可信赖（最佳）值来代替.方根误差对一组测量中的特大或特小误差反映非常敏感，
     * 所以，均方根误差能够很好地反映出测量的精密度，RMSE的值越小说明预测值越精确
     */
-  def computeRmse (model: PipelineModel, data:DataFrame) = {
-    /*math.sqrt(model.transform(data).map(x =>
-      (x.getFloat(2) - x.getFloat(3)) * (x.getFloat(2) - x.getFloat(3))
-    ).mean())*/
-    model.transform(data).select("rating", "prediction").collect().foreach{x =>
+  def computeRmse (model: PipelineModel, data:DataFrame): Double = {
 
-      println(x.getFloat(0) +"__"+ x.getFloat(1).toDouble)
-    }
-    //val usersProducts = data.map(x => (x., x.product))
-    //val pradictions = model.transform(usersProducts).map(x => ((x.user, x.product), x.rating))
-    //val ratesAndPreds = data.map(x => ((x.user, x.product), x.rating)).join(pradictions).values
-    //ratesAndPreds.sortByKey().repartition(1).sortBy(_._1).saveAsTextFile("data/result")//保存预测打分和真实分数为文件，方便观察
-    //math.sqrt(ratesAndPreds.map(x => (x._1 - x._2)*(x._1 - x._2)).mean())
+   math.sqrt(model.transform(data).select("rating", "prediction").map(x =>
+      (x.getFloat(0) - x.getFloat(1)) * (x.getFloat(0) - x.getFloat(1))
+      ).mean())
+
   }
 }
