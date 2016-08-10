@@ -3,117 +3,122 @@ package org.brave.spark.streaming
 import java.util.Properties
 
 import kafka.serializer.StringDecoder
-import org.apache.spark.SparkConf
-import org.apache.spark.sql.{Row, SQLContext}
-import org.apache.spark.sql.types.{DoubleType, IntegerType, StructField, StructType}
+import org.apache.spark.{ SparkContext, SparkConf }
+import org.apache.spark.sql.{ SaveMode, Row, SQLContext }
+import org.apache.spark.sql.types.{ DoubleType, IntegerType, StructField, StructType, StringType }
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming._
 import org.apache.spark.streaming.kafka._
-import org.apache.spark.mllib.recommendation.{MatrixFactorizationModel, Rating}
+import org.apache.spark.mllib.recommendation.{ MatrixFactorizationModel, Rating }
+import org.brave.spark.caseclass.Result
+import org.brave.util.util.CalendarTool
 import org.json.JSONObject
 
+import org.brave.spark.base.BaseConf
 
 /**
-  * Created by JasonHong on 2016/7/16.
-  */
-object KafkaSparkStreaming {
+ * Created by San on 2016/8/2.
+ */
+object KafkaSparkStreaming extends BaseConf {
 
   def main(args: Array[String]) {
-    if(args.length<5){
+    if (args.length < 6) {
       System.err.print(s"""
-                          |Usage: KafkaSparkStreaming <maxRate> <batchDuration> <concurrentJobs> <topics> <kParams>
+                          |Usage: KafkaSparkStreaming <zkQuorum> <group> <topics> <numThreads> <username> <password>
         """.stripMargin)
       System.exit(1)
     }
 
-    val maxRate = args(0) //1000
-    val batchDuration = args(1).toInt //60
-    val concurrentJobs = args(2) //5
-    val iTopic = args(3) //sparkmovie2
-    val kParams = {
-      var kvm: Map[String,String] = Map()
-
-      for {kv <- args(4).split(";")
-           kva = kv.split("=")}
-      {
-        kvm += (kva(0) -> kva(1))
-      }
-      kvm
-    }
-
+    val Array(zkQuorum, group, topics, numThreads) = args
+    println("zkQuorum:" + zkQuorum)
+    println("group:" + group)
+    println("topics:" + topics)
+    println("numThreads:" + numThreads)
+    val user = args(4)
+    val password = args(5)
+    conf.setAppName("KafkaStreaming")
+    val storageLevel = StorageLevel.DISK_ONLY
+    val ssc = new StreamingContext(conf, Seconds(batchInterval.toInt / 1000))
     val checkpointDirectory = "/checkpoint/KafkaStream"
-    val ssc = StreamingContext.getOrCreate(checkpointDirectory,
-      () => {
-        createContext( checkpointDirectory,maxRate,batchDuration,concurrentJobs,iTopic,kParams)
-      })
-
-    ssc.start()
-    ssc.awaitTermination()
-
-  }
-
-  def createContext(checkpointDirectory: String,maxRate: String,batchDuration:Int,concurrentJobs:String,iTopic:String,kParams:Map[String,String]): StreamingContext = {
-
-    // If you do not see this printed, that means the StreamingContext has been loaded
-    // from the new checkpoint
-    println("Creating new KafkaStreaming context")
-
-    val sparkConf = new SparkConf().setAppName("KafkaStreaming")
-//      .set("spark.streaming.backpressure.enabled","true")
-      .set("spark.scheduler.mode","FAIR")
-      .set("spark.shuffle.consolidateFiles", "true")
-      .set("spark.streaming.receiver.maxRate",maxRate)
-      .set("spark.serializer","org.apache.spark.serializer.KryoSerializer")
-      .set("spark.streaming.concurrentJobs",concurrentJobs)
-      .set("spark.cleaner.ttl","480")
-    //      .set("spark.streaming.receiver.writeAheadLog.enable","true")
-    val ssc = new StreamingContext(sparkConf, Seconds(batchDuration))
-    //        ssc.remember(Minutes(5))
-    val kafkaStream = KafkaUtils.createStream[String, String, StringDecoder, StringDecoder](ssc, kParams, Map(iTopic -> 1), StorageLevel.MEMORY_AND_DISK_SER).map(_._2)
-
+    ssc.checkpoint(checkpointDirectory)
+    val topicMap = topics.split(",").map((_, numThreads.toInt)).toMap
+    val kafkaStream = KafkaUtils.createStream(ssc, zkQuorum, group, topicMap, storageLevel)
+    val schema = new StructType(
+      Array(StructField("userid", IntegerType, true),
+        StructField("productid", IntegerType, true),
+        StructField("rating", DoubleType, true)))
 
     kafkaStream.foreachRDD { rdd =>
-
       val sqlContext = SQLContext.getOrCreate(rdd.sparkContext)
+      val ALSModel = MatrixFactorizationModel.load(rdd.sparkContext, "/user/hadoop/model/myCollaborativeFilter20160802/")
+      val recDF = sqlContext.read.json(rdd.values)
+      val recTuple2RDD = sqlContext.read.json(rdd.values).map { x => Tuple2(x.getLong(3).toInt, x.getLong(0).toInt) }
+      recDF.persist()
+      recTuple2RDD.persist()
 
-      val ratingRdd = rdd.mapPartitions( par => {
+      //实时预测用户对电影的评分
+      /*      val predictedRatings = ALSModel.predict(recTuple2RDD)
+      predictedRatings.collect.foreach(println)*/
 
-        val ALSModel = MatrixFactorizationModel.load(rdd.sparkContext, "/user/root/model/myCollaborativeFilter20160721/")
-        par.map(jsonUserProduct).map( arr =>
-          Row(arr(0),arr(1),ALSModel.predict(arr(0), arr(1)))
+      //实时为用户推荐10部电影,用迭代器的方式，避免在一个RDD的transformation里调用recommandproduct时报异常的问题
+      recDF.printSchema()
+      val useridRDD = recDF.select("userid").map(_.mkString)
+      val useridItr = useridRDD.toLocalIterator
+      var tmpuserid = ""
+      val c = new CalendarTool
+      while (useridItr.hasNext) {
+        tmpuserid = useridItr.next()
+        println("the user id is:" + tmpuserid)
+        val last_upadte_time = c.getCurrentTime
+        val result = ALSModel.recommendProducts(tmpuserid.trim.toInt, 12).map { x => tmpuserid + "|" + x.product.toString + "|" + x.rating.toString }
+        val recRDD = useridRDD.sparkContext.parallelize(result)
+        import sqlContext.implicits._
+        val recDF = recRDD.map(_.split('|')).map(x => Result(x(0).toInt, x(1).toInt, x(2).toDouble, last_upadte_time))
+        val recDF2 = recDF.toDF()
+        val prop = new Properties
+        prop.put("driver", "com.mysql.jdbc.Driver")
+        prop.put("user", user)
+        prop.put("password", password)
+        recDF2.write.mode(SaveMode.Append).jdbc("jdbc:mysql://master:3306/hive_db", "hive_db.user_movie_recommandation", prop)
+        //        println("The recommanded Movies for user " + tmpuserid + " are:\n")
+        //        for(i <- 0 to 9){
+        //          println("MovieID:" +  result(i).product + "|Rating:" + result(i).rating)
+        //        }
+
+      }
+
+      //实时为用户推荐10部电影,存在在map中又调用了transformation的问题。
+      /*      val getRecResult = org.apache.spark.sql.functions.udf((x: Long) =>
+        ALSModel.recommendProducts(x.toInt, 10).mkString
         )
+      recDF.printSchema()
+      println("input data:")
+      recDF.collect.foreach(println)
+      val resultDF2 = recDF.map { x =>
+        ALSModel.recommendProducts(x.getLong(3).toInt, 10)
+      }
+      val resultDF = recDF.withColumn("recommandresult", getRecResult(recDF.col("userid")))
+      println("output result:")
+      resultDF.collect.foreach(println)
+      resultDF2.collect.foreach(println)*/
 
-      })
-
-      val schema = new StructType(
-        Array(StructField("userid",IntegerType,true),
-        StructField("productid",IntegerType,true),
-        StructField("rating",DoubleType,true)))
-
-      sqlContext.createDataFrame(ratingRdd,schema).write.jdbc("mysql-url","table",dbProperties("user","password"))
-
-//      rdd.saveAsTextFile("/data/movieStream")
-
+      recDF.unpersist()
+      recTuple2RDD.unpersist()
     }
-
-    ssc
-  }
-
-  def jsonUserProduct(json: String): Array[Int] = {
-
-    val jsonob = new JSONObject(json)
-
-    Array(jsonob.getInt("userid"), jsonob.getInt("productid"))
-
+    ssc.start()
+    ssc.awaitTermination()
   }
 
   def dbProperties(username: String, password: String): Properties = {
-
     val prop = new Properties()
-    prop.setProperty("username",username)
-    prop.setProperty("password",password)
+    prop.setProperty("username", username)
+    prop.setProperty("password", password)
     prop
   }
 
+  def jsonUserProduct(json: String): Int = {
+    val jsonob = new JSONObject(json)
+    jsonob.getInt("userid")
+  }
 
 }
