@@ -1,9 +1,8 @@
-package org.brave.util.demo.ml.bayes
+package org.brave.util.demo.ml.linear
 
-
-import org.apache.spark.mllib.classification.{NaiveBayes, LogisticRegressionWithSGD}
+import org.apache.spark.mllib.classification.LogisticRegressionWithSGD
 import org.apache.spark.mllib.linalg.Vectors
-import org.apache.spark.mllib.regression.LabeledPoint
+import org.apache.spark.mllib.regression.{LinearRegressionWithSGD, LabeledPoint}
 import org.apache.spark.{SparkConf, SparkContext}
 import org.brave.spark.base.BaseConf
 
@@ -13,8 +12,6 @@ import org.brave.spark.base.BaseConf
   */
 object Model extends BaseConf{
    def main(args: Array[String]) {
-
-
       conf.setAppName("Model")
       conf.setMaster("local[4]")
      val sc = new SparkContext(conf)
@@ -30,11 +27,8 @@ object Model extends BaseConf{
            )
          )
      }.cache()
-
-   // println(parsedData);
-
-     val modelpath=s"hdfs://slave3:9000/logs/bayes/model$now";
-    val model=NaiveBayes.train(parsedData,lambda=1.0);
+     val modelpath=s"hdfs://slave3:9000/logs/linear/model$now";
+    val model=LinearRegressionWithSGD.train(parsedData,50);
     model.save(sc,modelpath);
 
    }
