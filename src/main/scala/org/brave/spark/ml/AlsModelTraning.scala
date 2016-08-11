@@ -1,4 +1,4 @@
-package org.brave.spark.util.datacleaner
+package org.brave.spark.ml
 
 import org.apache.log4j.{Logger, Level}
 import org.apache.spark.SparkContext
