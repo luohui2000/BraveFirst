@@ -1,4 +1,4 @@
-package org.brave.util.demo
+package org.brave.util.demo.db.mongo
 
 import org.apache.hadoop.conf.Configuration
 import org.apache.spark.{SparkConf, SparkContext}

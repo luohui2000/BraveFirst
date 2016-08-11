@@ -16,11 +16,9 @@
  */
 
 // scalastyle:off println
-package org.brave.util.demo
+package org.brave.util.demo.rdd
 
-import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.spark.sql.SQLContext
-import org.apache.spark.sql.functions._
+import org.apache.spark.SparkContext
 import org.brave.spark.base.BaseConf
 
 object RDDRelation extends BaseConf{

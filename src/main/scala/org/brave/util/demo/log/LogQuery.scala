@@ -16,10 +16,9 @@
  */
 
 // scalastyle:off println
-package org.brave.util.demo
+package org.brave.util.demo.log
 
 import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.spark.SparkContext._
 
 /**
  * Executes a roll up-style query against Apache logs.
