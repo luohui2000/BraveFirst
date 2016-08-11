@@ -1,4 +1,4 @@
-package org.brave.util.demo
+package org.brave.util.demo.hdfs
 
 import org.apache.spark._
 import org.brave.spark.base.BaseConf

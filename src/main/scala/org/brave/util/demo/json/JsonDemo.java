@@ -1,4 +1,4 @@
-package org.brave.util.demo;
+package org.brave.util.demo.json;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.SparkContext;

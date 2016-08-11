@@ -1,5 +1,5 @@
 
-package org.brave.util.demo
+package org.brave.util.demo.ml.als
 
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.recommendation.ALS

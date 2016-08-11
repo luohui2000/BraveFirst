@@ -1,4 +1,4 @@
-package org.brave.util.demo;
+package org.brave.util.demo.spider;
 
 //import com.gargoylesoftware.htmlunit.BrowserVersion;
 //import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;

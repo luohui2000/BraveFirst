@@ -1,8 +1,7 @@
 
-package org.brave.util.demo
+package org.brave.util.demo.log
 
 import org.apache.spark.SparkContext
-import org.apache.spark.mllib.recommendation.ALS
 import org.brave.spark.base.BaseConf
 
 
