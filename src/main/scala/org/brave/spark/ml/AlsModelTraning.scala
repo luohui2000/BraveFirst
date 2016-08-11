@@ -9,7 +9,10 @@ import org.apache.spark.sql.DataFrame
 import org.brave.spark.base.BaseConf
 
 
-//本类专门用来训练模型，并将训练好的模型保存到本地或者HDFS上，供推荐环节调用
+/*
+ * 本类专门用来训练模型，并将训练好的模型保存到本地或者HDFS上，供推荐环节调用
+ * 
+*/
 object AlsModelTraning extends BaseConf {
 
   def main(args: Array[String]): Unit = {
@@ -21,6 +24,7 @@ object AlsModelTraning extends BaseConf {
     conf.setAppName("Collaborative Filtering ")
     val sc = new SparkContext(conf)
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+    val hc = new org.apache.spark.sql.hive.HiveContext(sc)
     val ratingsListTuple = sc.textFile(filepath + "ratings.txt").map(_.split(",")).map(x =>
       Tuple4(x(0).toInt,
         x(1).toInt,
@@ -37,9 +41,10 @@ object AlsModelTraning extends BaseConf {
     val validateData = ratings_KV.filter(x => x._1 >= 6 && x._1 < 8).values.repartition(numPartitions).cache
     val testData = ratings_KV.filter(_._1 >= 8).values.repartition(numPartitions).cache
 
-    val traning = sqlContext.createDataFrame(traningData)
+    val training = sqlContext.createDataFrame(traningData)
     val validate = sqlContext.createDataFrame(validateData)
     val test = sqlContext.createDataFrame(testData)
+
 
     //将之前保存的模型删除并开始训练新的模型
     //val file_path = filepath + "alsModel"
@@ -60,7 +65,7 @@ object AlsModelTraning extends BaseConf {
     for (rank <- ranks; iter <- iters) {
       val als = new ALS().setRank(rank).setMaxIter(iter).setRegParam(0.01)
       val pipeline = new Pipeline().setStages(Array(als))
-      val model = pipeline.fit(traning)
+      val model = pipeline.fit(training)
       val validateRmse = computeRmse(model, validate) //使用训练出来的模型计算验证数据集得出rmse值
 
       if (validateRmse < bestValidateRmse) {

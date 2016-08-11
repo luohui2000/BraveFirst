@@ -30,7 +30,7 @@ object RecommandForSingleUser extends BaseConf {
     val modelpath = args(0)
     val userid = args(1).toInt
     val modelpath1 = "/user/root/model/myCollaborativeFilter20160802"
-    val model = MatrixFactorizationModel.load(sc, modelpath1)
+    val model = MatrixFactorizationModel.load(sc, modelpath)
     import sqlContext.implicits._
     val recResult = model.recommendProducts(userid, 12).map{ x =>  userid.toString()+"|"+x.product.toString()+"|"+x.rating.toString()}
     val recRDD = sc.parallelize(recResult)
