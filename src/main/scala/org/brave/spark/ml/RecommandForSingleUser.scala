@@ -22,23 +22,23 @@ object RecommandForSingleUser extends BaseConf {
     conf.setAppName("RecommandationOne")
     val sc = new SparkContext(conf)
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
-    val user = args(2)
-    val password = args(3)
-    
-    val c = new CalendarTool
-    val last_upadte_time = c.getCurrentTime
     val modelpath = args(0)
     val userid = args(1).toInt
-    val modelpath1 = "/user/root/model/myCollaborativeFilter20160802"
+    val user = args(2)
+    val password = args(3)
+
+    val c = new CalendarTool
+    val last_upadte_time = c.getCurrentTime
+    val modelpath1 = "data/alsModel"
     val model = MatrixFactorizationModel.load(sc, modelpath)
     import sqlContext.implicits._
-    val recResult = model.recommendProducts(userid, 12).map{ x =>  userid.toString()+"|"+x.product.toString()+"|"+x.rating.toString()}
+    val recResult = model.recommendProducts(userid, 12).map { x => userid.toString() + "|" + x.product.toString() + "|" + x.rating.toString() }
     val recRDD = sc.parallelize(recResult)
-    val recDF = recRDD.map ( _.split('|')).map(x=> Result(x(0).toInt,x(1).toInt,x(2).toDouble,last_upadte_time))
+    val recDF = recRDD.map(_.split('|')).map(x => Result(x(0).toInt, x(1).toInt, x(2).toDouble, last_upadte_time))
     val recDF2 = recDF.toDF()
     recDF2.first()
     recDF2.printSchema()
-    
+
     val prop = new Properties
     prop.put("username", user)
     prop.put("password", password)
