@@ -3,42 +3,18 @@ package org.brave.util.demo.ml.logistic
 import org.apache.spark.mllib.classification.LogisticRegressionModel
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.{SparkConf, SparkContext}
+import org.brave.spark.base.BaseConf
 
 /**
  * Created by yuchen
  * on 2016/8/10 0010.
  */
-object YuCE  {
+object Result extends BaseConf{
   def main(args: Array[String]) {
-
-    val conf = new SparkConf()
-    conf.set("spark.driver.memory", "5g")
-
      conf.setAppName("Model")
      conf.setMaster("local[4]")
     val sc = new SparkContext(conf)
-//    val data=sc.textFile("data/33.txt")
-//    val testData=null
-//    val parsedData=data.map{
-//      line=>
-//        val parts=line.split(",")
-//        LabeledPoint(
-//          parts(1).toDouble,
-//          Vectors.dense(
-//            parts(0).split(" ").map(_.toDouble)
-//          )
-//        )
-//    }.cache()
-
-  // println(parsedData);
-
-//    val model=LinearRegressionWithSGD.train(parsedData,2,0.1);
-    val modelpath="hdfs://slave3:9000/logs/model2016812";
-   // val model=LogisticRegressionWithSGD.train(parsedData,50);
-   // model.save(sc,modelpath);
-//    println(model.weights.size);
-//    println(model.weights);
-//    println(model.weights.toArray.filter(_!=0).size)
+    val modelpath=s"hdfs://slave3:9000/logs/logistic/model$now";
     val model2 = LogisticRegressionModel.load(sc, modelpath)
     //val result =model2.predict(Vectors.dense(30.0,0.69,0.07,2.0,1.51,1.0,1.0,10.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.11,9.0,5.0,0.7,3.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,3031.0,61.0,54.0,1.86,245.0,0.0,0.12))
     println("-----------------------------begin---------------------------------");

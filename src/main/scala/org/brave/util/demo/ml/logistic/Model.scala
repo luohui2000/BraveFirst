@@ -4,16 +4,15 @@ import org.apache.spark.mllib.classification.LogisticRegressionWithSGD
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.{SparkConf, SparkContext}
+import org.brave.spark.base.BaseConf
+import org.brave.util.util.CalendarTool
 
 /**
  * Created by yuchen
  * on 2016/8/10 0010.
  */
-object Model  {
+object Model extends BaseConf{
   def main(args: Array[String]) {
-
-    val conf = new SparkConf()
-    conf.set("spark.driver.memory", "5g")
 
      conf.setAppName("Model")
      conf.setMaster("local[4]")
@@ -33,7 +32,7 @@ object Model  {
 
   // println(parsedData);
 
-    val modelpath="hdfs://slave3:9000/logs/model2016812";
+    val modelpath=s"hdfs://slave3:9000/logs/logistic/model$now";
    val model=LogisticRegressionWithSGD.train(parsedData,50);
    model.save(sc,modelpath);
 

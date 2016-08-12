@@ -4,7 +4,7 @@ import java.util.Properties
 
 
 import org.apache.spark.SparkConf
-import org.brave.util.util.PropertiesUtil
+import org.brave.util.util.{CalendarTool, PropertiesUtil}
 
 
 /**
@@ -61,4 +61,9 @@ class BaseConf {
 
   val conf = new SparkConf()
   conf.set("spark.driver.memory", sparkDriverMemory)
+
+
+  val c = new CalendarTool
+  val now=c.getToday
+
 }
