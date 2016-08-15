@@ -25,14 +25,14 @@ object AlsModelTraning2 extends BaseConf {
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
     val hc = new org.apache.spark.sql.hive.HiveContext(sc)
     val training = hc.sql("select userid,movieid,rating from ratings").withColumnRenamed("userid", "user").withColumnRenamed("movieid", "item")
-    //    val training = hc.sql("select userid,movieid,rating from ratings_training").withColumnRenamed("userid", "user").withColumnRenamed("movieid", "item").map{x => Rating(x.getInt(0), x.getInt(1), x.getFloat(2))}
+//    val training = hc.sql("select userid,movieid,rating from ratings_training").withColumnRenamed("userid", "user").withColumnRenamed("movieid", "item")
     val validate = hc.sql("select userid,movieid,rating from ratings_batch").withColumnRenamed("userid", "user").withColumnRenamed("movieid", "item")
     validate.first()
     training.first()
 
-    val ranks = Tuple2(10, 22)
+    val ranks = Tuple2(5, 22)
     val lambdas = List(0.1, 10.0)
-    val iters = Tuple2(4, 7)
+    val iters = Tuple2(3, 7)
     var bestModel: PipelineModel = null
     var bestValidateRmse = Double.MaxValue
     var bestRank = 0
@@ -46,11 +46,11 @@ object AlsModelTraning2 extends BaseConf {
       println("validateRmse:" + validateRmse)
       if (validateRmse <= bestValidateRmse) {
         //筛选出最小rmse值对应的模型和参数
-        var bestModel = model
-        var bestValidateRmse = validateRmse
-        var bestRank = rank
-        var bestIter = iter
-        println("rank: " + rank + " iter" + " validateRmse: " + validateRmse + " bestValidateRmse: " + bestValidateRmse)
+        bestModel = model
+        bestValidateRmse = validateRmse
+        bestRank = rank
+        bestIter = iter
+        println("rank: " + rank + " iter" + iter + " validateRmse: " + validateRmse + " bestValidateRmse: " + bestValidateRmse)
       }
     }
     bestModel.write.overwrite().save(filepath + "alsModel")
