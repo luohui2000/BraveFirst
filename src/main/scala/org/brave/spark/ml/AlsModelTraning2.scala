@@ -24,19 +24,19 @@ object AlsModelTraning2 extends BaseConf {
     val sc = new SparkContext(conf)
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
     val hc = new org.apache.spark.sql.hive.HiveContext(sc)
-    val training = hc.sql("select userid,movieid,rating from ratings_training").withColumnRenamed("userid", "user").withColumnRenamed("movieid", "item")
+    val training = hc.sql("select userid,movieid,rating from ratings").withColumnRenamed("userid", "user").withColumnRenamed("movieid", "item")
+    //    val training = hc.sql("select userid,movieid,rating from ratings_training").withColumnRenamed("userid", "user").withColumnRenamed("movieid", "item").map{x => Rating(x.getInt(0), x.getInt(1), x.getFloat(2))}
     val validate = hc.sql("select userid,movieid,rating from ratings_batch").withColumnRenamed("userid", "user").withColumnRenamed("movieid", "item")
+    validate.first()
+    training.first()
 
-    val ranks = Tuple2(22, 22)
+    val ranks = Tuple2(10, 22)
     val lambdas = List(0.1, 10.0)
-    val iters = Tuple2(7, 7)
+    val iters = Tuple2(4, 7)
     var bestModel: PipelineModel = null
     var bestValidateRmse = Double.MaxValue
     var bestRank = 0
     var bestIter = -1
-    
-    val rank = 22
-    val iter = 7
 
     for (rank <- ranks._1 to ranks._2; iter <- iters._1 to iters._2) {
       val als = new ALS().setRank(rank).setMaxIter(iter).setRegParam(0.01)
@@ -50,7 +50,7 @@ object AlsModelTraning2 extends BaseConf {
         var bestValidateRmse = validateRmse
         var bestRank = rank
         var bestIter = iter
-        println("rank: " + rank + " iter" +  " validateRmse: " + validateRmse + " bestValidateRmse: " + bestValidateRmse)
+        println("rank: " + rank + " iter" + " validateRmse: " + validateRmse + " bestValidateRmse: " + bestValidateRmse)
       }
     }
     bestModel.write.overwrite().save(filepath + "alsModel")
