@@ -45,7 +45,6 @@ object AlsModelTraning extends BaseConf {
     val validate = sqlContext.createDataFrame(validateData)
     val test = sqlContext.createDataFrame(testData)
 
-
     //将之前保存的模型删除并开始训练新的模型
     //val file_path = filepath + "alsModel"
     /*val path = Path(file_path)
@@ -87,7 +86,9 @@ object AlsModelTraning extends BaseConf {
       "  Rmse :" + testDataRmse
 
     )*/
-
+    println("===============Best Model Training Completed!==============")
+    println("bestRank:" + bestRank)
+    println("bestIter:" + bestIter)
     bestModel.write.overwrite().save(filepath + "alsModel")
   }
 

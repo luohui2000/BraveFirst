@@ -25,7 +25,7 @@ object AlsModelTraning2 extends BaseConf {
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
     val hc = new org.apache.spark.sql.hive.HiveContext(sc)
     val training = hc.sql("select userid,movieid,rating from ratings").withColumnRenamed("userid", "user").withColumnRenamed("movieid", "item")
-//    val training = hc.sql("select userid,movieid,rating from ratings_training").withColumnRenamed("userid", "user").withColumnRenamed("movieid", "item")
+    //    val training = hc.sql("select userid,movieid,rating from ratings_training").withColumnRenamed("userid", "user").withColumnRenamed("movieid", "item")
     val validate = hc.sql("select userid,movieid,rating from ratings_batch").withColumnRenamed("userid", "user").withColumnRenamed("movieid", "item")
     validate.persist()
     training.persist()
@@ -53,8 +53,11 @@ object AlsModelTraning2 extends BaseConf {
         println("rank: " + rank + " iter" + iter + " validateRmse: " + validateRmse + " bestValidateRmse: " + bestValidateRmse)
       }
     }
+    println("===============Best Model Training Completed!==============")
+    println("bestRank:" + bestRank)
+    println("bestIter:" + bestIter)
     bestModel.write.overwrite().save(filepath + "alsModel")
-    
+
     validate.unpersist()
     training.unpersist()
   }

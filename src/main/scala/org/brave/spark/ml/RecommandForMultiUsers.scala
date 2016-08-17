@@ -5,7 +5,7 @@ import java.util.Properties
 import org.apache.spark._
 import org.apache.spark.mllib._
 import org.apache.spark.sql._
-import org.apache.spark.mllib.recommendation.MatrixFactorizationModel
+import org.apache.spark.mllib.recommendation._
 
 import org.brave.spark.base.BaseConf
 import org.brave.util.util._
