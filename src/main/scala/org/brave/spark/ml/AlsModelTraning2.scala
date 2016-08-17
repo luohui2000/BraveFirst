@@ -27,8 +27,8 @@ object AlsModelTraning2 extends BaseConf {
     val training = hc.sql("select userid,movieid,rating from ratings").withColumnRenamed("userid", "user").withColumnRenamed("movieid", "item")
 //    val training = hc.sql("select userid,movieid,rating from ratings_training").withColumnRenamed("userid", "user").withColumnRenamed("movieid", "item")
     val validate = hc.sql("select userid,movieid,rating from ratings_batch").withColumnRenamed("userid", "user").withColumnRenamed("movieid", "item")
-    validate.first()
-    training.first()
+    validate.persist()
+    training.persist()
 
     val ranks = Tuple2(5, 22)
     val lambdas = List(0.1, 10.0)
@@ -54,6 +54,9 @@ object AlsModelTraning2 extends BaseConf {
       }
     }
     bestModel.write.overwrite().save(filepath + "alsModel")
+    
+    validate.unpersist()
+    training.unpersist()
   }
 
   /**

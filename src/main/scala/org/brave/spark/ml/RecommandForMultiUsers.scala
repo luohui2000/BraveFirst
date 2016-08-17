@@ -23,10 +23,12 @@ object RecommandForMultiUsers extends BaseConf {
     val sc = new SparkContext(conf)
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
     val hc = new org.apache.spark.sql.hive.HiveContext(sc)
-    val modelpath = args(0)
+    val modelpath = args(0).mkString
     val someUsers = args(1).toInt
     val user = args(2)
     val password = args(3)
+    println(modelpath)
+    println(someUsers)
 
     //通过recommendProductsForUsers方法来跑，集群无法成功运行起来
     /*    val modelpath = args(0)
