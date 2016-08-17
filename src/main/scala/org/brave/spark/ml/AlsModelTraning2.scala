@@ -44,7 +44,7 @@ object AlsModelTraning2 extends BaseConf {
       val model = pipeline.fit(training)
       val validateRmse = computeRmse(model, validate) //使用训练出来的模型计算验证数据集得出rmse值
       println("validateRmse:" + validateRmse)
-      if (validateRmse <= bestValidateRmse) {
+      if (validateRmse < bestValidateRmse) {
         //筛选出最小rmse值对应的模型和参数
         bestModel = model
         bestValidateRmse = validateRmse

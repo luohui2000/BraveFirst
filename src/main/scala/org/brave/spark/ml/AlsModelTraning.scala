@@ -84,7 +84,6 @@ object AlsModelTraning extends BaseConf {
 //      "  lambda :" + bestLambda +
       "  numIter :" + bestIter +
       "  Rmse :" + testDataRmse
-
     )*/
     println("===============Best Model Training Completed!==============")
     println("bestRank:" + bestRank)
