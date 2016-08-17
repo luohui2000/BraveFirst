@@ -1,11 +1,8 @@
 package org.brave.spark.ml
 
-import scala.util.Random
 
 import org.apache.spark._
 import org.apache.spark.mllib.recommendation.ALS
-import org.apache.spark.ml.classification.LogisticRegression
-import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.recommendation.Rating
 import org.apache.spark.mllib.recommendation.MatrixFactorizationModel
 
@@ -38,7 +35,7 @@ object getBestModel extends BaseConf {
     var bestRank = 0
     var bestIter = -1
 
-    val ranks = Tuple2(5, 22)
+    val ranks = Tuple2(20, 30)
     val iters = Tuple2(3, 7)
     for (rank <- ranks._1 to ranks._2; iter <- iters._1 to iters._2) {
       val model = ALS.train(ratingRDD, rank, iter, 0.01)
@@ -57,7 +54,7 @@ object getBestModel extends BaseConf {
           err * err
       }.mean()
       val RMSE = math.sqrt(MSE)
-      println("Current RMSE = " + RMSE)
+      println("Current rank = " + rank + " Current iter = " + iter + "Current RMSE = " + RMSE)
       if (RMSE < bestRMSE) {
         bestmodel = model
         bestRMSE = RMSE
