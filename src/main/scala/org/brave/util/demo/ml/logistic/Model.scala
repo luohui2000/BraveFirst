@@ -8,6 +8,7 @@ import org.brave.spark.base.BaseConf
 import org.brave.util.util.CalendarTool
 
 /**
+ * 逻辑回归
  * Created by yuchen
  * on 2016/8/10 0010.
  */
@@ -32,7 +33,7 @@ object Model extends BaseConf{
 
   // println(parsedData);
 
-    val modelpath=s"hdfs://slave3:9000/logs/logistic/model$now";
+    val modelpath=s"hdfs://master60:9000/logs/logistic/model$now";
    val model=LogisticRegressionWithSGD.train(parsedData,50);
    model.save(sc,modelpath);
 

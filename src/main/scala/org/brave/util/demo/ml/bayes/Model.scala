@@ -8,6 +8,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 import org.brave.spark.base.BaseConf
 
 /**
+ *  贝叶斯分类
   * Created by yuchen
   * on 2016/8/10 0010.
   */

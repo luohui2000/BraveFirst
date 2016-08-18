@@ -14,8 +14,8 @@
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-    <script src="js/html5shiv.js"></script>
-    <script src="js/respond.min.js"></script>
+    <script src="/js/html5shiv.js"></script>
+    <script src="/js/respond.min.js"></script>
     <![endif]-->
 </head>
 
@@ -24,13 +24,13 @@
 
 <div class="container">
 
-    <form class="form-signin" action="/recommandation/login.do">
+    <form class="form-signin" type="post" action="/recommandation/login.do">
         <div class="form-signin-heading text-center">
             <h1 class="sign-title">Sign In</h1>
-            <img src="/images/login-logo.png" style="width:200px;height: 50px"  alt=""/>
+            <img src="/images/logo.png" style="width:200px;height: 50px"  alt=""/>
         </div>
         <div class="login-wrap">
-            <input type="text" class="form-control" placeholder="User ID" autofocus>
+            <input type="text" name="userId" name="userId" class="form-control" placeholder="User ID" value="12031" autofocus>
             <input type="password" class="form-control" placeholder="Password">
 
             <button class="btn btn-lg btn-login btn-block" type="submit">

@@ -2371,6 +2371,7 @@ table.display tr.even.gradeX, table.display tr.gradeX, tr.even.gradeU td.sorting
     margin-bottom: 1%;
     margin-right: 1%;
     width: 233px;
+    height: 200px;
     background: #EFF0F4;
     color: #7A7676;
     -webkit-transition: all 0.3s;

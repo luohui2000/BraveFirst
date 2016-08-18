@@ -21,6 +21,14 @@ public interface RecommandationDao {
      */
     List<RecommandationBo> getRecommandationMoviesByUserId(String userId);
 
+    /**
+     * 实时
+     * 通过用户ID获取电影列表
+     * @param userId
+     * @return List<OrderBo>
+     */
+    List<RecommandationBo> getStreamingRecommandationMoviesByUserId(String userId);
+
 
     /**
      *  将爬取的url存到数据库中

@@ -13,6 +13,7 @@ object RunHelloWorldOnLocalServer extends BaseConf {
   def main(args: Array[String]) {
 
     conf.setAppName("RunHelloWorldOnLocalServer")
+    conf.setMaster("spark://master60:7077")
     val sc = new SparkContext(conf)
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
 //    val df = sc.textFile("hdfs://master:9000/logs/demo.json")

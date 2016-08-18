@@ -7,6 +7,7 @@ import org.brave.spark.base.BaseConf
 
 
 /**
+ *  最小二乘法
  *
  * 物品推荐的例子
  * yuchen
