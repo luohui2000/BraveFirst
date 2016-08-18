@@ -8,6 +8,7 @@ import org.brave.spark.base.BaseConf
 import org.brave.util.util.CalendarTool
 
 /**
+ * 支持向量机
   * Created by yuchen
   * on 2016/8/10 0010.
   */

@@ -6,7 +6,7 @@
     <meta name="description" content="">
     <meta name="author" content="ThemeBucket">
     <link rel="shortcut icon" href="#" type="image/png">
-    <title>推荐</title>
+    <title>实时推荐</title>
     <link href="/css/style.css" rel="stylesheet">
     <link href="/css/style-responsive.css" rel="stylesheet">
 
@@ -17,10 +17,12 @@
     <script src="/js/module/recommandation.js"></script>
 
 
+
     <![endif]-->
 
 </head>
-<body class="sticky-header" onload="getUserMoviceList()">
+<body class="sticky-header" onload="getUserMoviceList();">
+
 <%
     String userId = session.getAttribute("userId").toString();
 %>
@@ -50,6 +52,7 @@
                 </li>
             </ul>
         </div>
+
     </div>
     <div class="menu-right">
         <ul class="notification-menu">
@@ -129,7 +132,7 @@
             <li>
                 <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                     <img src="../images/avatar-mini.jpg" alt="" />
-                   <%=userId %>
+                    <%=userId %>
                     <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-usermenu pull-right">
@@ -142,16 +145,15 @@
         </ul>
     </div>
     <div class="main-content">
-
         <div class="wrapper">
             <div class="row">
                 <div class="col-sm-12">
                     <section class="panel">
                         <form action="" class="searchform" style="left: 50px" action="index.html" method="post">
-                            <input type="text" readonly style="width: 300px" id="userId" name="userId" value="<%=userId %>" placeholder="请输入用户ID"/>
+                            <input type="text" style="width: 300px" id="userId" readonly name="userId" value="<%=userId %>" placeholder="请输入用户ID"/>
                             <input type="button"
                                    onclick='getUserMoviceList()'
-                                   class="btn btn-danger" style="width: 100px" value="离线推荐"/>
+                                   class="btn btn-danger" style="width: 100px" value="实时推荐"/>
                         </form>
                         <div class="panel-body">
                             <div id="gallery" class="media-gal">
@@ -162,7 +164,6 @@
                 </div>
             </div>
         </div>
-
     </div>
     <!-- main content end-->
 </section>
@@ -177,7 +178,7 @@
         var userId = $("#userId").val();
         var alertString = "推荐结果：\n\n";
         $.ajax({
-            url: "getUserMoviceList.do?userId=" + userId,
+            url: "getUserMoviceListStreaming.do?userId=" + userId,
             type: "POST",
             async: false,
             cache: true,

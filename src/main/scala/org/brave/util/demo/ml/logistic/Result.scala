@@ -12,9 +12,9 @@ import org.brave.spark.base.BaseConf
 object Result extends BaseConf{
   def main(args: Array[String]) {
      conf.setAppName("Model")
-     conf.setMaster("local[4]")
+     conf.setMaster("spark://master60:7077")
     val sc = new SparkContext(conf)
-    val modelpath=s"hdfs://slave3:9000/logs/logistic/model$now";
+    val modelpath=s"hdfs://master60:9000/logs/logistic/model$now";
     val model2 = LogisticRegressionModel.load(sc, modelpath)
     //val result =model2.predict(Vectors.dense(30.0,0.69,0.07,2.0,1.51,1.0,1.0,10.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.11,9.0,5.0,0.7,3.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,3031.0,61.0,54.0,1.86,245.0,0.0,0.12))
     println("-----------------------------begin---------------------------------");

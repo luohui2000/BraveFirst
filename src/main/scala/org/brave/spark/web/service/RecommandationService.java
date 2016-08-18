@@ -25,6 +25,16 @@ public class RecommandationService {
     public List<RecommandationBo> getRecommandationMoviesByUserId(String userId) {
         return recommandationDao.getRecommandationMoviesByUserId(userId);
     }
+
+    /**
+     * 实时
+     * 通过用户ID获取电影列表
+     * @param userId
+     * @return List<OrderBo>
+     */
+    public List<RecommandationBo> getStreamingRecommandationMoviesByUserId(String userId) {
+        return recommandationDao.getStreamingRecommandationMoviesByUserId(userId);
+    }
     /**
      *  将爬取的url存到数据库中
      * @param movieId
