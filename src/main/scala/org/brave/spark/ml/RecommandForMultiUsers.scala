@@ -13,9 +13,9 @@ import org.brave.spark.caseclass._
 
 object RecommandForMultiUsers extends BaseConf {
   def main(args: Array[String]) {
-    if (args.length < 4) {
+    if (args.length < 5) {
       System.err.print(s"""
-                          |Usage: RecommandForMultiUsers <ModelPath> <SubsetUserCount> <username> <password>
+                          |Usage: RecommandForMultiUsers <ModelPath> <SubsetUserCount> <MysqlHostName> <username> <password>
         """.stripMargin)
       System.exit(1)
     }
@@ -25,8 +25,9 @@ object RecommandForMultiUsers extends BaseConf {
     val hc = new org.apache.spark.sql.hive.HiveContext(sc)
     val modelpath = args(0).mkString
     val someUsers = args(1).toInt
-    val user = args(2)
-    val password = args(3)
+    val mysqlHostName = args(2)
+    val user = args(3)
+    val password = args(4)
     println(modelpath)
     println(someUsers)
 
@@ -56,11 +57,11 @@ object RecommandForMultiUsers extends BaseConf {
 
     while (itr.hasNext) {
       val userid = itr.next()
-      saveRecResultToMysql(userid, model, sc, sqlContext,user,password)
+      saveRecResultToMysql(userid, model, sc, sqlContext,mysqlHostName,user,password)
     }
   }
   
-  def saveRecResultToMysql(userid: Int, model: MatrixFactorizationModel, sc: SparkContext, sqlContext: SQLContext,user:String,password:String) {
+  def saveRecResultToMysql(userid: Int, model: MatrixFactorizationModel, sc: SparkContext, sqlContext: SQLContext,mysqlHostName:String,user:String,password:String) {
     val c = new CalendarTool
     val last_upadte_time = c.getCurrentTime
     val recResult = model.recommendProducts(userid, 12).map { x => userid.toString() + "|" + x.product.toString() + "|" + x.rating.toString() }
@@ -72,6 +73,6 @@ object RecommandForMultiUsers extends BaseConf {
     prop.put("driver", "com.mysql.jdbc.Driver")
     prop.put("user", user)
     prop.put("password", password)
-    recDF2.write.mode(SaveMode.Append).jdbc("jdbc:mysql://master:3306/hive_db", "hive_db.user_movie_recommandation", prop)
+    recDF2.write.mode(SaveMode.Append).jdbc(s"jdbc:mysql://${mysqlHostName}:3306/hive_db", "hive_db.user_movie_recommandation", prop)
   }
 }
