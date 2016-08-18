@@ -52,11 +52,14 @@ object RecommandForMultiUsers extends BaseConf {
     recResultForAllUsers.saveAsTextFile("/data/txt/recResultForAllUsers0803")*/
 
     val users = hc.sql(s"select distinct(userid) from ratings limit $someUsers")
+    users.show()
     val itr = users.rdd.map { x => x.getInt(0) }.toLocalIterator
     val model = MatrixFactorizationModel.load(sc, modelpath)
 
+    println("==================write rec rsult to mysql=====================")
     while (itr.hasNext) {
       val userid = itr.next()
+      println(userid)
       saveRecResultToMysql(userid, model, sc, sqlContext,mysqlHostName,user,password)
     }
   }
