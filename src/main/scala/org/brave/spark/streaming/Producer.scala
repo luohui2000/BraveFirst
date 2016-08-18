@@ -18,13 +18,21 @@ import org.brave.util.util.CalendarTool
  */
 object Producer extends BaseConf {
   def main(args: Array[String]) {
+        if (args.length < 2) {
+      System.err.print(s"""
+                          |Usage: Producer <kafkabrokers> <topics> 
+        """.stripMargin)
+      System.exit(1)
+    }
     conf.setAppName("Producer")
     val sc = new SparkContext(conf)
-    val Array(brokers, topic) = Array("master60:9092", "test")
+    val kafkabrokers = args(0)
+    val topics = args(1)
+    val Array(brokers, topic) = Array(kafkabrokers, topics)
     val props = new Properties()
-    props.put("bootstrap.servers", "master60:9092")
+    props.put("bootstrap.servers",kafkabrokers)
     props.put("acks", "all")
-    props.put("topic", "test")
+    props.put("topic", topics)
     //    props.put("retries", 0)
     //    props.put("batch.size", "16384")
     //    props.put("linger.ms", "1")

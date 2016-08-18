@@ -22,20 +22,26 @@ import org.brave.spark.base.BaseConf
 object KafkaSparkStreaming extends BaseConf {
 
   def main(args: Array[String]) {
-    if (args.length < 6) {
+    if (args.length < 8) {
       System.err.print(s"""
-                          |Usage: KafkaSparkStreaming <zkQuorum> <group> <topics> <numThreads> <username> <password>
+                          |Usage: KafkaSparkStreaming <zkQuorum> <group> <topics> <numThreads> <username> <password> <MysqlHostName> <ModelPath> 
         """.stripMargin)
       System.exit(1)
     }
 
-    val Array(zkQuorum, group, topics, numThreads) = args
+    val Array(zkQuorum, group, topics, numThreads,user,password,mysqlHostName,modelPath) = args
     println("zkQuorum:" + zkQuorum)
     println("group:" + group)
     println("topics:" + topics)
     println("numThreads:" + numThreads)
-    val user = args(4)
-    val password = args(5)
+    println("user:" + user)
+    println("password:" + password)
+    println("mysqlHostName:" + mysqlHostName)
+    println("modelPath:" + modelPath)
+//    val user = args(4)
+//    val password = args(5)
+//    val mysqlHostName = args(6)
+//    val modelPath = args(7)
     conf.setAppName("KafkaStreaming")
     val storageLevel = StorageLevel.DISK_ONLY
     val ssc = new StreamingContext(conf, Seconds(batchInterval.toInt / 1000))
@@ -50,7 +56,7 @@ object KafkaSparkStreaming extends BaseConf {
 
     kafkaStream.foreachRDD { rdd =>
       val sqlContext = SQLContext.getOrCreate(rdd.sparkContext)
-      val ALSModel = MatrixFactorizationModel.load(rdd.sparkContext, "/user/hadoop/model/myCollaborativeFilter20160802/")
+      val ALSModel = MatrixFactorizationModel.load(rdd.sparkContext, modelPath)
       val recDF = sqlContext.read.json(rdd.values)
       val recTuple2RDD = sqlContext.read.json(rdd.values).map { x => Tuple2(x.getLong(3).toInt, x.getLong(0).toInt) }
       recDF.persist()
@@ -79,7 +85,7 @@ object KafkaSparkStreaming extends BaseConf {
         prop.put("driver", "com.mysql.jdbc.Driver")
         prop.put("user", user)
         prop.put("password", password)
-        recDF2.write.mode(SaveMode.Append).jdbc("jdbc:mysql://master:3306/hive_db", "hive_db.user_movie_recommandation", prop)
+        recDF2.write.mode(SaveMode.Append).jdbc(s"jdbc:mysql://$mysqlHostName:3306/hive_db", "hive_db.user_movie_recommandation_streaming", prop)
         //        println("The recommanded Movies for user " + tmpuserid + " are:\n")
         //        for(i <- 0 to 9){
         //          println("MovieID:" +  result(i).product + "|Rating:" + result(i).rating)
