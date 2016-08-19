@@ -3,6 +3,11 @@ This document illustrates the product we BraveFirst Team developed, which aims a
 BraveFirst is a Data Mining use case of  Apache Spark and relative tools. 
 It is developed for IBM Spark competition.
 ##Product Name:Recommandation System For movies
+##Data Introduction
+Our Data is downloaded from http://files.grouplens.org/datasets/movielens/ml-latest.zip
+This dataset (ml-latest) describes 5-star rating and free-text tagging activity from [MovieLens](http://movielens.org), a movie recommendation service. It contains 21622187 ratings and 516139 tag applications across 30106 movies. These data were created by 234934 users between January 09, 1995 and August 06, 2015. This dataset was generated on August 06, 2015.
+Users were selected at random for inclusion. All selected users had rated at least 1 movies. No demographic information is included. Each user is represented by an id, and no other information is provided.
+The data are contained in four files, `links.csv`, `movies.csv`, `ratings.csv` and `tags.csv`. More details about the contents and use of all these files follows.
 ##Github Link(currently a private project)
 https://github.com/luohui2000/BraveFirst
 ##Product Video Link
