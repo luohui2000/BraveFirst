@@ -1,4 +1,4 @@
-#Product Instruction of BraveFirst Team
+#Product Introduction of BraveFirst Team
 This document illustrates the product we BraveFirst Team developed, which aims at providing suitable movie recommend result for different users.
 BraveFirst is a Data Mining use case of  Apache Spark and relative tools. 
 It is also developed for IBM Spark competition.
